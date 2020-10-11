@@ -52,30 +52,8 @@
                 <div class="card">
                     <div class="card-content">
                         <p class="title">Table occupancy</p>
-                        <b-tag type="is-success" class="my-2" size="is-large">
-                            <p>15</p>
-                        </b-tag>
-                        <b-tag type="is-warning" class="my-2" size="is-large">
-                            <p>16</p>
-                        </b-tag>
-                        <b-tag type="is-secondary" class="my-2" size="is-large">
-                            <p>--</p>
-                        </b-tag>
-                        <b-tag type="is-secondary" class="my-2" size="is-large">
-                            <p>--</p>
-                        </b-tag>
-                        <br>
-                        <b-tag type="is-danger" class="my-2" size="is-large">
-                            <p>17</p>
-                        </b-tag>
-                        <b-tag type="is-success" class="my-2" size="is-large">
-                            <p>18</p>
-                        </b-tag>
-                        <b-tag type="is-secondary" class="my-2" size="is-large">
-                            <p>--</p>
-                        </b-tag>
-                        <b-tag type="is-secondary" class="my-2" size="is-large">
-                            <p>--</p>
+                        <b-tag :type="leTable.state == 0 ? 'is-success' : leTable.state == 1 ? 'is-warning' : 'is-danger'" class="my-2" size="is-large" :id="leTable.table" v-for="leTable in tables" v-bind:key="leTable.table">
+                            <p>{{leTable.table}}</p>
                         </b-tag>
                         <br>
                         <p class="subtitle has-text-left mt-5">Legend</p>
@@ -122,6 +100,8 @@ import CardWidget from '@/components/CardWidget'
 import CardComponent from '@/components/CardComponent'
 import LineChart from '@/components/LineChart'
 import PieChart from '@/components/PieChart'
+import API from '@/constants/api'
+
 export default {
 
     components: {
@@ -129,8 +109,19 @@ export default {
         CardComponent
     },
 
+    mounted() {
+        setTimeout(this.startTableVisionAPIPolling(), 5000)
+    },
+
     data() {
         return {
+            tables: [
+                {
+                    "table": 15,
+                    "state": 0
+                }
+            ],
+
             nanyuanReturns: {
                 labels: ['Trays not returned to cleaner trolleys', 'Trays into cleaner trolleys'],
                 datasets: [
@@ -156,6 +147,29 @@ export default {
                 ]
             },
 
+        }
+    },
+
+    methods: {
+        startTableVisionAPIPolling() {
+            this.fetchTableVacancy()
+            setInterval(() => {
+                this.fetchTableVacancy()
+            }, 5000);
+        },
+        fetchTableVacancy() {
+            this.toastAlert("Polling...", "is-info", 5000)
+            let r = this.$axios.get(API.BASE + API.TABLEVISION + "/15").then((apiResponse) => {
+                var data = apiResponse.data
+                this.tables = [data]
+            }).catch((error) => {
+                if (error.response != undefined) {
+                    var response = error.response.data
+                    this.toastAlert(response.message, "is-danger", 5000)
+                } else {
+                    this.toastAlert(error, "is-danger", 5000)
+                }
+            })
         }
     }
 }
