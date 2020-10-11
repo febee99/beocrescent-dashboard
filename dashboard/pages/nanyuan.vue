@@ -1,7 +1,8 @@
 <template>
   <section>
     <p class="title m-5 pt-5">RFID-tagged tray-returns data</p>
-    <div>
+    {{ this.rfidFsrTable }}
+    <!-- <div>
       <label for="example-datepicker">Choose a date</label>
       <b-form-datepicker
         id="example-datepicker"
@@ -9,7 +10,7 @@
         class="mb-2"
       ></b-form-datepicker>
       <p>Value: '{{ value }}'</p>
-    </div>
+    </div> -->
     <div class="columns mt-5 is-vcentered is-multiline">
       <div class="column is-4 has-text-centered">
         <div class="card">
@@ -152,6 +153,7 @@ export default {
       rfidFsrAPIStatus: "Offline",
       tables: [],
       rfidFsrTable: [],
+      loaded: false,
 
       interval: null,
 
@@ -187,6 +189,9 @@ export default {
           "18:00",
           "19:00",
           "20:00",
+          "21:00",
+          "22:00",
+          "23:00",
         ],
         datasets: [
           {
@@ -194,7 +199,7 @@ export default {
             pointBackgroundColor: "white",
             borderWidth: 3,
             pointBorderColor: "#249EBF",
-            data: this.rfidFsrTable,
+            data: [],
           },
         ],
       },
@@ -216,7 +221,6 @@ export default {
         }, 5000);
       }
     },
-
     fetchTableVacancy() {
       let r = this.$axios
         .get(API.BASE + API.TABLEVISION)
@@ -242,40 +246,48 @@ export default {
         });
     },
     get_fsr_rfid_data() {
-      let r = this.$axios
-        .get(API.BASE + API.RFIDFSRVISIO)
-        .then((apiResponse) => {
-          var data = apiResponse.data;
-          var date = "2020-10-11";
-          console.log(data);
-
-          var time_sensor_data = data[date];
-          console.log(date);
-          console.log(time_sensor_data);
-          for (time in time_sensor_data) {
-            var data = time_sensor_data[time];
-            console.log(data);
-
-            this.rfidFsrTable.append(data);
-          }
-
-          // this.rfidFsrTable = data.rfidFsrTable;
-          this.rfidFsrAPIStatus = "LIVE";
-        })
-        .catch((error) => {
-          this.rfidFsrAPIStatus = "Offline";
-          this.rfidFsrTable = [];
-          if (error.response != undefined) {
-            var response = error.response.data;
-            this.toastAlert(response.message, "is-danger", 5000);
-            console.log("table vision " + response.message);
-          } else {
-            if (this.rfidFsrAPIStatus != "Offline") {
-              this.toastAlert(error, "is-danger", 5000);
-              console.log("table vision " + error);
+      if (!this.loaded) {
+        this.loaded = true;
+        let r = this.$axios
+          .get(API.BASE + API.RFIDFSRVISIO)
+          .then((apiResponse) => {
+            var data = apiResponse.data;
+            var date = "2020-10-11";
+            // console.log(data);
+            // this.  = [];
+            var test = [];
+            var time_sensor_data = data[date];
+            // console.log(date);
+            console.log(Object.keys(time_sensor_data));
+            for (var time of Object.keys(time_sensor_data)) {
+              console.log(time);
+              var data1 = time_sensor_data[time];
+              console.log(data1);
+              this.rfidFsrTable.push(data1);
             }
-          }
-        });
+            // this.rfidFsrTable = data.rfidFsrTable;
+            console.log(test);
+            this.cleanerReturnInsights.datasets.data = this.rfidFsrTable;
+            console.log(this.rfidFsrTable);
+            // console.log(this.cleanerReturnInsights.datasets.data);
+
+            this.rfidFsrAPIStatus = "LIVE";
+          })
+          .catch((error) => {
+            this.rfidFsrAPIStatus = "Offline";
+            this.rfidFsrTable = [];
+            if (error.response != undefined) {
+              var response = error.response.data;
+              this.toastAlert(response.message, "is-danger", 5000);
+              console.log("table vision " + response.message);
+            } else {
+              if (this.rfidFsrAPIStatus != "Offline") {
+                this.toastAlert(error, "is-danger", 5000);
+                console.log("table vision " + error);
+              }
+            }
+          });
+      }
     },
   },
 };
