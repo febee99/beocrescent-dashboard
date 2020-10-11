@@ -107,7 +107,7 @@
         <card-widget
           class="tile is-child"
           type="is-info"
-          icon="clock"
+          icon="charity"
           :number="84"
           suffix="%"
           label="Self-returns rate"
@@ -118,7 +118,7 @@
         <card-widget
           class="tile is-child"
           type="is-info"
-          icon="clock"
+          icon="silverware-clean"
           :number="39"
           suffix=" occasions"
           label="Tables cleared by cleaners today"
@@ -268,7 +268,6 @@ export default {
             for (var time of Object.keys(time_sensor_data)) {
               console.log(time);
               var data1 = time_sensor_data[time];
-            //   console.log(data1);
               this.rfidFsrTable.push(data1);
               this.cleanerReturnInsights.datasets[0].data.push(data1)
               console.log(this.cleanerReturnInsights)
