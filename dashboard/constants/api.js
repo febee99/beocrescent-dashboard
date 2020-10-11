@@ -6,7 +6,7 @@ export const prodBase = '';
 // change this if required
 export const base = localBase;
 
-export const tableVision = base == localBase ? ':5000/table' : '/table';
+export const tableVision = base == localBase ? ':5000/tables' : '/tables';
 
 export default {
     // base URL

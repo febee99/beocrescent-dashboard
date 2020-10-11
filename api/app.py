@@ -12,7 +12,7 @@ CORS(app)
 connect("iot", host="mongodb+srv://root:0NqePorN2WDm7xYc@cluster0.fvp4p.mongodb.net/iot?retryWrites=true&w=majority")
 
 
-@app.route('/table/<table>')
+@app.route('/tables/<table>')
 def get_table(table):
     # error handling not done, the get method will result in error if id not found
     table = Table.objects.get(table=15)
@@ -30,7 +30,7 @@ def get_table(table):
 
     return jsonify(result), 200
 
-@app.route('/table/<table>', methods=['PUT'])
+@app.route('/tables/<table>', methods=['PUT'])
 def update_table_state(table):
     state = int(request.args.get('state'))
     table = Table.objects.get(table=15)
