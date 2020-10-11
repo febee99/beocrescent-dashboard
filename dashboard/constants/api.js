@@ -7,11 +7,13 @@ export const prodBase = '';
 export const base = localBase;
 
 export const tableVision = base == localBase ? ':5000/tables' : '/tables';
+export const rfidFsrVision = base == localBase ? ':5001/rfid_fsr' : '';
 
 export default {
     // base URL
     BASE: base,
 
     // API endpoitns
-    TABLEVISION: tableVision
+    TABLEVISION: tableVision,
+    RFIDFSRVISIO: rfidFsrVision
 }
