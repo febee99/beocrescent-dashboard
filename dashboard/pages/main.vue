@@ -60,6 +60,12 @@ import LineChart from '@/components/LineChart'
 import PieChart from '@/components/PieChart'
 export default {
 
+    head() {
+        return {
+            title: this.title,
+        }
+    },
+
     components: {
         CardWidget,
         DoughnutChart
@@ -67,6 +73,7 @@ export default {
 
     data() {
         return {
+            title: 'Beo Crescent IoT Dashboard',
             trayReturnInsights: {
                 labels: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
                 datasets: [
