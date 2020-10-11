@@ -43,5 +43,22 @@ def update_table_state(table):
 
     return jsonify(result), 201
 
+@app.route('/tables')
+def get_all_tables():
+    result = []
+    tables = Table.objects()
+    
+    for table in tables:
+        result.append({
+            "table": table.table,
+            "state": table.state
+        })
+
+    result = {
+        "tables": result
+    }
+
+    return jsonify(result), 200
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
