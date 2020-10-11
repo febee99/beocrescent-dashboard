@@ -165,20 +165,23 @@ export default {
         fetchTableVacancy() {
             let r = this.$axios.get(API.BASE + API.TABLEVISION).then((apiResponse) => {
                 var data = apiResponse.data
-                console.log(data.tables)
+                
                 this.tables = data.tables
                 this.tableVisionAPIStatus = "LIVE"
             }).catch((error) => {
+                this.tableVisionAPIStatus = "Offline"
+                this.tables = []
                 if (error.response != undefined) {
                     var response = error.response.data
                     this.toastAlert(response.message, "is-danger", 5000)
                     console.log("table vision " + response.message)
                 } else {
-                    this.toastAlert(error, "is-danger", 5000)
-                    console.log("table vision " + error)
+
+                    if (this.tableVisionAPIStatus != "Offline") {
+                        this.toastAlert(error, "is-danger", 5000)
+                        console.log("table vision " + error)
+                    }
                 }
-                this.tableVisionAPIStatus = "Offline"
-                this.tables = []
             })
         }
     }
