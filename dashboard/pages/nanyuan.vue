@@ -74,7 +74,7 @@
                 <card-widget
                     class="tile is-child"
                     type="is-info"
-                    icon="clock"
+                    icon="charity"
                     :number="84"
                     suffix="%"
                     label="Self-returns rate"
@@ -84,8 +84,8 @@
             <div class="column is-4">
                 <card-widget
                     class="tile is-child"
-                    type="is-info"
-                    icon="clock"
+                    type="is-danger"
+                    icon="silverware-clean"
                     :number="39"
                     suffix=" occasions"
                     label="Tables cleared by cleaners today"
@@ -157,7 +157,7 @@ export default {
                 // continue polling after that
                 this.interval = setInterval(() => {
                     this.fetchTableVacancy()
-                }, 5000);
+                }, 1000);
             }
 
         },
