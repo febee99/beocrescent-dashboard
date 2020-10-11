@@ -152,16 +152,21 @@ export default {
 
     methods: {
         startTableVisionAPIPolling() {
+            // call fetch for the first time
             this.fetchTableVacancy()
+
+            // continue polling after that
             setInterval(() => {
                 this.fetchTableVacancy()
             }, 5000);
         },
+        
         fetchTableVacancy() {
             this.toastAlert("Polling...", "is-info", 5000)
-            let r = this.$axios.get(API.BASE + API.TABLEVISION + "/15").then((apiResponse) => {
+            let r = this.$axios.get(API.BASE + API.TABLEVISION).then((apiResponse) => {
                 var data = apiResponse.data
-                this.tables = [data]
+                console.log(data.tables)
+                this.tables = data.tables
             }).catch((error) => {
                 if (error.response != undefined) {
                     var response = error.response.data
