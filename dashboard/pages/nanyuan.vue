@@ -52,6 +52,7 @@
                 <div class="card">
                     <div class="card-content">
                         <p class="title">Table occupancy</p>
+                        <p class="has-text-weight-bold">API Status: <span :class="tableVisionAPIStatus == 'LIVE' ? 'has-text-success' : 'has-text-danger'">{{this.tableVisionAPIStatus}}</span></p>
                         <b-tag :type="leTable.state == 0 ? 'is-success' : leTable.state == 1 ? 'is-warning' : 'is-danger'" class="my-2" size="is-large" :id="leTable.table" v-for="leTable in tables" v-bind:key="leTable.table">
                             <p>{{leTable.table}}</p>
                         </b-tag>
@@ -115,11 +116,8 @@ export default {
 
     data() {
         return {
+            tableVisionAPIStatus: "Offline",
             tables: [
-                {
-                    "table": 15,
-                    "state": 0
-                }
             ],
 
             nanyuanReturns: {
@@ -162,18 +160,22 @@ export default {
         },
         
         fetchTableVacancy() {
-            this.toastAlert("Polling...", "is-info", 5000)
             let r = this.$axios.get(API.BASE + API.TABLEVISION).then((apiResponse) => {
                 var data = apiResponse.data
                 console.log(data.tables)
                 this.tables = data.tables
+                this.tableVisionAPIStatus = "LIVE"
             }).catch((error) => {
                 if (error.response != undefined) {
                     var response = error.response.data
                     this.toastAlert(response.message, "is-danger", 5000)
+                    console.log("table vision " + response.message)
                 } else {
                     this.toastAlert(error, "is-danger", 5000)
+                    console.log("table vision " + error)
                 }
+                this.tableVisionAPIStatus = "Offline"
+                this.tables = []
             })
         }
     }
