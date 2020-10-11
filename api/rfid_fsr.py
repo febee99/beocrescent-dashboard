@@ -35,9 +35,9 @@ def rfid_fsr():
             temp_dict[extracted_time] = counttime
         else:
             dict_info[date] = list_data
-        
+    
         print(dict_info)
-    return dumps(data)
+    return json.dumps(dict_info), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)
