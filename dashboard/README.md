@@ -34,6 +34,81 @@ We're using the material design icons, feel free to refer to the cheatsheet [her
 
 To edit the page, `index.vue` is the main entry point. Other tabs are imported, for example, `nanyuan.vue`.
 
+## Adding graphs
+
+To display the graph, tag your `<line-chart>` with a `ref` like below:
+
+```html
+<line-chart ref="nanyuanLineChart" :chartData="this.cleanerReturnInsights" />
+```
+
+In `data()`, `cleanerReturnInsights` currently looks like this:
+
+```
+    cleanerReturnInsights: {
+        labels: [
+            "06:00",
+            "07:00",
+            "08:00",
+            "09:00",
+            "10:00",
+            "11:00",
+            "12:00",
+            "13:00",
+            "14:00",
+            "15:00",
+            "16:00",
+            "17:00",
+            "18:00",
+            "19:00",
+            "20:00",
+            "21:00",
+            "22:00",
+            "23:00",
+        ],
+        datasets: [
+            {
+                label: "Nan Yuan Fishball Noodle Stall",
+                pointBackgroundColor: "white",
+                borderWidth: 3,
+                pointBorderColor: "#249EBF",
+                data: [], //update this
+            },
+        ],
+    },
+```
+
+So if I were to call my API, I will want to update the `cleanerReturnInsights.datasets[0].data`, which looks like this:
+
+```js
+        // in the get_fsr_rfid_data() function in nanyuan.vue:
+
+        for (var time of Object.keys(time_sensor_data)) {
+            console.log(time);
+            var data1 = time_sensor_data[time];
+
+            // Store in a temp array first in data()
+            this.rfidFsrTable.push(data1);
+
+            // also update the datasets
+            this.cleanerReturnInsights.datasets[0].data.push(data1)
+        }
+```
+
+Then in the same page, go to the `watch` property in the script and watch for changes on the `rfidFsrTable` variable. If there are changes to the chart from an API call, call the `renderChart()` function:
+
+```js
+    watch: {
+        rfidFsrTable: function() {
+            this.$refs.nanyuanLineChart.renderChart(this.cleanerReturnInsights)
+        }
+    },
+```
+
+This will trigger the `renderChart()` function from the child element (`line-chart`).
+
+> You can take a look at `nanyuan.vue` for this example.
+
 ## Troubleshooting
 
 _Just contact Emmanuel (Telegram @theodorayy) lol I will try my best to assist_
