@@ -32,8 +32,8 @@ We're using the material design icons, feel free to refer to the cheatsheet [her
 
 ## Pages
 
-To edit the page, `index.vue` is the main entry point. Other tabs are imported, for example, nanyuan.vue.
+To edit the page, `index.vue` is the main entry point. Other tabs are imported, for example, `nanyuan.vue`.
 
 ## Troubleshooting
 
-Just contact Emmanuel: Telegram @theodorayy lol I will try my best to assist
+_Just contact Emmanuel (Telegram @theodorayy) lol I will try my best to assist_
