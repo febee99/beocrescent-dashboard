@@ -110,15 +110,13 @@ export default {
         CardComponent
     },
 
-    mounted() {
-        setTimeout(this.startTableVisionAPIPolling(), 5000)
-    },
-
     data() {
         return {
             tableVisionAPIStatus: "Offline",
             tables: [
             ],
+
+            interval: null,
 
             nanyuanReturns: {
                 labels: ['Trays not returned to cleaner trolleys', 'Trays into cleaner trolleys'],
@@ -149,14 +147,19 @@ export default {
     },
 
     methods: {
-        startTableVisionAPIPolling() {
+        startTableVisionAPIPolling(start) {
             // call fetch for the first time
-            this.fetchTableVacancy()
-
-            // continue polling after that
-            setInterval(() => {
+            if (!start) {
+                clearInterval(this.interval);
+            } else {
                 this.fetchTableVacancy()
-            }, 5000);
+
+                // continue polling after that
+                this.interval = setInterval(() => {
+                    this.fetchTableVacancy()
+                }, 5000);
+            }
+
         },
         
         fetchTableVacancy() {

@@ -1,12 +1,12 @@
 <template>
     <section class="section">
-        <b-tabs position="is-centered" size="is-medium" class="block">
+        <b-tabs position="is-centered" size="is-medium" class="block" v-model="activeTab">
             <b-tab-item label="Overview" icon="information-variant">
                 <Overview/>
             </b-tab-item>
             <b-tab-item label="Nan Yuan Fishball" icon="noodles">
                 <!-- nanyuan.vue -->
-                <Nanyuan/>
+                <Nanyuan ref="nanyuan"/>
             </b-tab-item>
         </b-tabs>
 
@@ -17,7 +17,12 @@
 import Overview from '@/pages/main'
 import Nanyuan from '@/pages/nanyuan'
 export default {
-    name: 'Beo Crescent Dashboard',
+
+    head() {
+        return {
+            title: this.title,
+        }
+    },
 
     components: {
         Overview,
@@ -26,6 +31,25 @@ export default {
 
     data() {
         return {
+            title: 'Beo Crescent IoT Dashboard',
+            activeTab: 0,
+        }
+    },
+
+    watch: {
+        activeTab: function() {
+            if (this.activeTab == 1) {
+                this.triggerNYAPI()
+            } else {
+                this.$refs.nanyuan.startTableVisionAPIPolling(false)
+            }
+        }
+    },
+
+    methods: {
+        triggerNYAPI() {
+            // triggers the api polling once clicked
+            this.$refs.nanyuan.startTableVisionAPIPolling(true)
         }
     }
 }
