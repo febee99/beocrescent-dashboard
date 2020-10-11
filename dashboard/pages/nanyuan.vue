@@ -15,7 +15,7 @@
       <div class="column is-4 has-text-centered">
         <div class="card">
           <div class="card-content">
-            <line-chart :chartData="this.cleanerReturnInsights" />
+            <line-chart ref="nanyuanLineChart" :chartData="this.cleanerReturnInsights" />
           </div>
         </div>
       </div>
@@ -206,17 +206,23 @@ export default {
     };
   },
 
+  watch: {
+    rfidFsrTable: function() {
+        this.$refs.nanyuanLineChart.renderChart(this.cleanerReturnInsights)
+    }
+  },
+
   methods: {
     startTableVisionAPIPolling(start) {
       // call fetch for the first time
       if (!start) {
         clearInterval(this.interval);
       } else {
-        this.fetchTableVacancy();
+        // this.fetchTableVacancy();
         this.get_fsr_rfid_data();
         // continue polling after that
         this.interval = setInterval(() => {
-          this.fetchTableVacancy();
+        //   this.fetchTableVacancy();
           this.get_fsr_rfid_data();
         }, 5000);
       }
@@ -262,13 +268,13 @@ export default {
             for (var time of Object.keys(time_sensor_data)) {
               console.log(time);
               var data1 = time_sensor_data[time];
-              console.log(data1);
+            //   console.log(data1);
               this.rfidFsrTable.push(data1);
+              this.cleanerReturnInsights.datasets[0].data.push(data1)
+              console.log(this.cleanerReturnInsights)
             }
             // this.rfidFsrTable = data.rfidFsrTable;
             console.log(test);
-            this.cleanerReturnInsights.datasets.data = this.rfidFsrTable;
-            console.log(this.rfidFsrTable);
             // console.log(this.cleanerReturnInsights.datasets.data);
 
             this.rfidFsrAPIStatus = "LIVE";
