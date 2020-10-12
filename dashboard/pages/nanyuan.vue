@@ -30,12 +30,12 @@
       <div class="column is-4 has-text-centered">
         <div class="card">
           <div class="card-content">
-            <p class="title">Other data</p>
+            <p class="title">Tray Return Rate</p>
             <card-widget
               class="tile is-child"
               type="is-info"
               icon="clock"
-              :number="84"
+              :number="this.selfReturn"
               suffix="%"
               label="Self-returns rate"
               description="Percentage of patrons who cleaned up their tables after eating today"
@@ -45,9 +45,9 @@
               class="tile is-child"
               type="is-info"
               icon="clock"
-              :number="84"
+              :number="this.cleanerReturn"
               suffix="%"
-              label="Self-returns rate"
+              label="Cleaner Return rate"
               description="Percentage of patrons who cleaned up their tables after eating today"
             />
           </div>
@@ -160,6 +160,8 @@ export default {
       loaded: false,
       rfid_loaded:false,
       interval: null,
+      cleanerReturn: 0,
+      selfReturn: 0,
 
       nanyuanReturns: {
         labels: [
@@ -240,6 +242,7 @@ export default {
         // this.fetchTableVacancy();
         this.get_fsr_rfid_data();
         this.get_rfidTrayIn();
+
 
         // continue polling after that
         this.interval = setInterval(() => {
@@ -342,6 +345,10 @@ export default {
             var tray_in = data["CleanerReturn"]
             var self_return = data["SelfReturn"]
             var data1 = [tray_in, self_return]
+            var total = self_return + tray_in
+            
+            this.cleanerReturn = parseFloat((tray_in/total) * 100).toFixed(2)
+            this.selfReturn = parseFloat((self_return/total) * 100).toFixed(2)
 
             this.nanyuanReturns.datasets[0].data.push(self_return)
             this.nanyuanReturns.datasets[0].data.push(tray_in)

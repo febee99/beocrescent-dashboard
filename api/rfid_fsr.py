@@ -61,7 +61,6 @@ def tray_in():
             extracted_time = time[0:2] + ":00"
             list_data[extracted_time] = 1
     print(dict_info)
-    print("------------------------------")
     return json.dumps(dict_info), 200
 
 
@@ -70,7 +69,6 @@ def tray_in_out():
     total_out = collection.find().count() 
     trolley_in = tray_in_data.find().count() 
     self_in = total_out - trolley_in
-
     data = {"CleanerReturn": trolley_in, "SelfReturn": self_in}
     print(data)
     return json.dumps(data), 200
