@@ -1,21 +1,25 @@
 <template>
   <section>
     <p class="title m-5 pt-5">RFID-tagged tray-returns data</p>
-    <!-- <div>
-      <label for="example-datepicker">Choose a date</label>
-      <b-form-datepicker
-        id="example-datepicker"
-        v-model="value"
-        class="mb-2"
-      ></b-form-datepicker>
-      <p>Value: '{{ value }}'</p>
-    </div> -->
+    <div></div>
     <div class="columns mt-5 is-vcentered is-multiline">
       <div class="column is-4 has-text-centered">
         <div class="card">
           <div class="card-content">
             <p class="title">Daily Tray Return Count</p>
-            <line-chart ref="nanyuanLineChart" :chartData="this.cleanerReturnInsights" />
+            <b-field label="Select a date">
+              <b-datepicker
+                placeholder="Click to select..."
+                v-model="date"
+                :min-date="minDate"
+                :max-date="maxDate"
+              >
+              </b-datepicker>
+            </b-field>
+            <line-chart
+              ref="nanyuanLineChart"
+              :chartData="this.cleanerReturnInsights"
+            />
           </div>
         </div>
       </div>
@@ -134,21 +138,32 @@
 import CardWidget from "@/components/CardWidget";
 import CardComponent from "@/components/CardComponent";
 import LineChart from "@/components/LineChart";
-import PieChart from "@/components/PieChart";
 import API from "@/constants/api";
-// import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
-// Vue.use(BootstrapVue);
-// import "bootstrap/dist/css/bootstrap.css";
-// import "bootstrap-vue/dist/bootstrap-vue.css";
-// import "./custom.scss";
+import PieChart from "@/components/PieChart";
 
 export default {
   components: {
     CardWidget,
     CardComponent,
   },
-
+  computed: {
+    selectedDate: function () {
+      if (!this.date) {
+        return "2020-10-12";
+      } else {
+        return (
+          this.date.getFullYear() +
+          "-" +
+          (parseInt(this.date.getMonth()) + 1) +
+          "-" +
+          this.date.getDate()
+        );
+      }
+    },
+  },
   data() {
+    var today = new Date();
+    console.log("today is :" + today);
     return {
       tableVisionAPIStatus: "Offline",
       rfidFsrAPIStatus: "Offline",
@@ -158,14 +173,22 @@ export default {
       rfidFsrTable: [],
       TrayIn: [],
       loaded: false,
-      rfid_loaded:false,
+      rfid_loaded: false,
       interval: null,
+      date: new Date(),
+      minDate: new Date(
+        today.getFullYear() - 80,
+        today.getMonth(),
+        today.getDate()
+      ),
+      maxDate: new Date(
+        today.getFullYear() + 18,
+        today.getMonth(),
+        today.getDate()
+      ),
 
       nanyuanReturns: {
-        labels: [
-          "Patrons Return Count",
-          "Cleaner Return Count",
-        ],
+        labels: ["Patrons Return Count", "Cleaner Return Count"],
         datasets: [
           {
             backgroundColor: ["#ee4350", "#409cd2"],
@@ -220,15 +243,18 @@ export default {
   },
 
   watch: {
-    rfidFsrTable: function() {
-      this.$refs.nanyuanLineChart.renderChart(this.cleanerReturnInsights)
+    rfidFsrTable: function () {
+      this.$refs.nanyuanLineChart.renderChart(this.cleanerReturnInsights);
     },
 
-    rfidTrayIn: function() {
-      this.$ref.nanyuanPieChart.renderChart(this.nanyuanReturns)
-    }
+    rfidTrayIn: function () {
+      this.$ref.nanyuanPieChart.renderChart(this.nanyuanReturns);
+    },
 
-
+    date: function () {
+      this.getFsrRfidData();
+      this.getRfidTrayIn();
+    },
   },
 
   methods: {
@@ -238,14 +264,14 @@ export default {
         clearInterval(this.interval);
       } else {
         // this.fetchTableVacancy();
-        this.get_fsr_rfid_data();
-        this.get_rfidTrayIn();
+        this.getFsrRfidData();
+        this.getRfidTrayIn();
 
         // continue polling after that
         this.interval = setInterval(() => {
-        //   this.fetchTableVacancy();
-          this.get_fsr_rfid_data();
-          // this.get_rfidTrayIn();
+          //   this.fetchTableVacancy();
+          // this.getFsrRfidData();
+          // this.getRfidTrayIn();
         }, 5000);
       }
     },
@@ -254,7 +280,6 @@ export default {
         .get(API.BASE + API.TABLEVISION)
         .then((apiResponse) => {
           var data = apiResponse.data;
-
           this.tables = data.tables;
           this.tableVisionAPIStatus = "LIVE";
         })
@@ -273,96 +298,95 @@ export default {
           }
         });
     },
-    get_fsr_rfid_data() {
-      if (!this.loaded) {
-        this.loaded = true;
-        let r = this.$axios
-          .get(API.BASE + API.RFIDFSRVISIO)
-          .then((apiResponse) => {
-            var data = apiResponse.data;
-            var date = "2020-10-12";
-            var time_sensor_data = data[date];
-            // console.log(date);
-            console.log(Object.keys(time_sensor_data));
-            for (var time of Object.keys(time_sensor_data)) {
-              console.log(time);
-              var data1 = time_sensor_data[time];
-              this.rfidFsrTable.push(data1);
-              this.cleanerReturnInsights.datasets[0].data.push(data1)
-            }
+    getFsrRfidData() {
+      // if (!this.loaded) {
+      // this.loaded = true;
+      this.cleanerReturnInsights.datasets[0].data = [];
+      let r = this.$axios
+        .get(API.BASE + API.RFIDFSRVISIO)
+        .then((apiResponse) => {
+          var data = apiResponse.data;
+          var date = this.selectedDate;
+          var time_sensor_data = data[date];
+          // console.log(date);
+          console.log(Object.keys(time_sensor_data));
+          for (var time of Object.keys(time_sensor_data)) {
+            console.log(time);
+            var data1 = time_sensor_data[time];
+            this.rfidFsrTable.push(data1);
+            this.cleanerReturnInsights.datasets[0].data.push(data1);
+          }
 
-            this.rfidFsrAPIStatus = "LIVE";
-          })
-        let t = this.$axios
-          .get(API.BASE + API.RFIDTRAYIN)
-          .then((apiResponse) => {
-            var data = apiResponse.data;
-            console.log(data)
-            var date = "2020-10-12";
-            var time_sensor_data = data[date];
-            // console.log(date);
-            console.log(Object.keys(time_sensor_data));
-            for (var time of Object.keys(time_sensor_data)) {
-              console.log(time);
-              var data1 = time_sensor_data[time];
-              this.TrayIn.push(data1);
-              console.log("HELLO")
-              console.log(this.TrayIn)
-              this.cleanerReturnInsights.datasets[1].data.push(data1)
+          this.rfidFsrAPIStatus = "LIVE";
+        });
+      let t = this.$axios
+        .get(API.BASE + API.RFIDTRAYIN)
+        .then((apiResponse) => {
+          var data = apiResponse.data;
+          console.log(data);
+          var date = this.selectedDate;
+          var time_sensor_data = data[date];
+          console.log(this.selectedDate);
+          console.log(Object.keys(time_sensor_data));
+          for (var time of Object.keys(time_sensor_data)) {
+            console.log(time);
+            var data1 = time_sensor_data[time];
+            this.TrayIn.push(data1);
+            console.log("HELLO");
+            console.log(this.TrayIn);
+            this.cleanerReturnInsights.datasets[1].data.push(data1);
+          }
+          this.rfidFsrAPIStatus = "LIVE";
+        })
+        .catch((error) => {
+          this.rfidFsrAPIStatus = "Offline";
+          this.rfidFsrTable = [];
+          if (error.response != undefined) {
+            var response = error.response.data;
+            this.toastAlert(response.message, "is-danger", 5000);
+            console.log("table vision " + response.message);
+          } else {
+            if (this.rfidFsrAPIStatus != "Offline") {
+              this.toastAlert(error, "is-danger", 5000);
+              console.log("table vision " + error);
             }
-            this.rfidFsrAPIStatus = "LIVE";
-          })
-          .catch((error) => {
-            this.rfidFsrAPIStatus = "Offline";
-            this.rfidFsrTable = [];
-            if (error.response != undefined) {
-              var response = error.response.data;
-              this.toastAlert(response.message, "is-danger", 5000);
-              console.log("table vision " + response.message);
-            } else {
-              if (this.rfidFsrAPIStatus != "Offline") {
-                this.toastAlert(error, "is-danger", 5000);
-                console.log("table vision " + error);
-              }
-            }
-          });
-      }
+          }
+        });
+      // }
     },
 
+    getRfidTrayIn() {
+      // this.rfid_loaded = true;
+      console.log(API.RFIDTRAYINOUT);
+      this.nanyuanReturns.datasets[0].data = [];
+      let r = this.$axios
+        .get(API.BASE + API.RFIDTRAYINOUT)
+        .then((apiResponse) => {
+          var data = apiResponse.data;
 
-    get_rfidTrayIn() {
+          var tray_in = data["CleanerReturn"];
+          var self_return = data["SelfReturn"];
+          var data1 = [tray_in, self_return];
 
-        this.rfid_loaded = true
-        console.log(API.RFIDTRAYINOUT)
-        let r = this.$axios
-          .get(API.BASE + API.RFIDTRAYINOUT)
-          .then((apiResponse) => {
-            var data = apiResponse.data;
+          this.nanyuanReturns.datasets[0].data.push(self_return);
+          this.nanyuanReturns.datasets[0].data.push(tray_in);
 
-            var tray_in = data["CleanerReturn"]
-            var self_return = data["SelfReturn"]
-            var data1 = [tray_in, self_return]
-
-            this.nanyuanReturns.datasets[0].data.push(self_return)
-            this.nanyuanReturns.datasets[0].data.push(tray_in)
-
-            this.rfidFsrAPIStatus = "LIVE";
-          })
-          .catch((error) => {
-            this.rfidTrayInStatus = "Offline";
-            this.get_rfidTrayIn = [];
-            if (error.response != undefined) {
-              var response = error.response.data;
-              this.toastAlert(response.message, "is-danger", 5000);
-              console.log("table vision " + response.message);
-            } else {
-              if (this.rfidFsrAPIStatus != "Offline") {
-                this.toastAlert(error, "is-danger", 5000);
-                console.log("table vision " + error);
-              }
+          this.rfidFsrAPIStatus = "LIVE";
+        })
+        .catch((error) => {
+          this.rfidTrayInStatus = "Offline";
+          this.getRfidTrayIn = [];
+          if (error.response != undefined) {
+            var response = error.response.data;
+            this.toastAlert(response.message, "is-danger", 5000);
+            console.log("table vision " + response.message);
+          } else {
+            if (this.rfidFsrAPIStatus != "Offline") {
+              this.toastAlert(error, "is-danger", 5000);
+              console.log("table vision " + error);
             }
-          });
-
+          }
+        });
     },
   },
 };
