@@ -8,12 +8,16 @@ export const base = localBase;
 
 export const tableVision = base == localBase ? ':5000/tables' : '/tables';
 export const rfidFsrVision = base == localBase ? ':5001/rfid_fsr' : '';
+export const trayReturnVision = base == localBase ? ':5002/g6trayreturn' : '';
 
 export default {
     // base URL
     BASE: base,
 
-    // API endpoitns
+    // Group 7 API endpoitns
     TABLEVISION: tableVision,
-    RFIDFSRVISIO: rfidFsrVision
+    RFIDFSRVISIO: rfidFsrVision,
+
+    // Group 6 API endpoints
+    TRAYRETURNVISION: trayReturnVision
 }
