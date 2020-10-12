@@ -26,7 +26,6 @@
       <div class="column is-4 has-text-centered">
         <div class="card">
           <div class="card-content">
-            <p class="title">Tray Return Count</p>
             <pie-chart ref="nanyuanPieChart" :chartData="this.nanyuanReturns" />
           </div>
         </div>
@@ -188,7 +187,6 @@ export default {
         today.getMonth(),
         today.getDate()
       ),
-
       nanyuanReturns: {
         labels: ["Patrons Return Count", "Cleaner Return Count"],
         datasets: [
@@ -250,7 +248,7 @@ export default {
     },
 
     rfidTrayIn: function () {
-      this.$ref.nanyuanPieChart.renderChart(this.nanyuanReturns);
+      this.$refs.nanyuanPieChart.renderChart(this.nanyuanReturns);
     },
 
     date: function () {
@@ -268,7 +266,6 @@ export default {
         // this.fetchTableVacancy();
         this.getFsrRfidData();
         this.getRfidTrayIn();
-
 
         // continue polling after that
         this.interval = setInterval(() => {
@@ -361,24 +358,29 @@ export default {
     getRfidTrayIn() {
       // this.rfid_loaded = true;
       console.log(API.RFIDTRAYINOUT);
-      this.nanyuanReturns.datasets[0].data = [];
+      // this.nanyuanReturns.datasets[0].data = [1, 1];
       let r = this.$axios
         .get(API.BASE + API.RFIDTRAYINOUT)
         .then((apiResponse) => {
           var data = apiResponse.data;
 
-          var tray_in = data["CleanerReturn"]
-          var self_return = data["SelfReturn"]
+          var tray_in = data["CleanerReturn"];
+          var self_return = data["SelfReturn"];
 
-          var total = self_return + tray_in
-          
-          this.cleanerReturn = parseFloat((tray_in/total) * 100).toFixed(2)
-          this.selfReturn = parseFloat((self_return/total) * 100).toFixed(2)
+          var total = self_return + tray_in;
+
+          this.cleanerReturn = parseFloat((tray_in / total) * 100).toFixed(2);
+          this.selfReturn = parseFloat((self_return / total) * 100).toFixed(2);
 
           var data1 = [tray_in, self_return];
+          // console.log(this.nanyuanReturns.datasets[0].data);
+          this.nanyuanReturns.datasets[0].data = [self_return, tray_in];
+          // console.log(this.nanyuanReturns.datasets[0].data);
+          // this.$ref.nanyuanPieChart.updateChart();
+          // this.$ref.nanyuanPieChart.renderChart(this.nanyuanReturns);
+          this.rfidTrayIn.push(0);
 
-          this.nanyuanReturns.datasets[0].data.push(self_return);
-          this.nanyuanReturns.datasets[0].data.push(tray_in);
+          // this.nanyuanReturns.datasets[0].data.push(tray_in);
 
           this.rfidFsrAPIStatus = "LIVE";
         })
