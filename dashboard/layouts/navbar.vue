@@ -9,9 +9,9 @@
         </template>
         <template slot="end">
             <b-navbar-item tag="router-link" :to="{path: '/'}">
-                Something
+                Home
             </b-navbar-item>
-            
+
             <b-navbar-dropdown :label="'Hey, user!'">
                 <b-navbar-item tag="router-link" :to="{path: '/settings'}">
                     Settings
@@ -47,5 +47,5 @@ export default {
         }
     }
 
-    
+
 </style>
