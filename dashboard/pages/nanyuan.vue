@@ -280,7 +280,7 @@ export default {
           .get(API.BASE + API.RFIDFSRVISIO)
           .then((apiResponse) => {
             var data = apiResponse.data;
-            var date = "2020-10-11";
+            var date = "2020-10-12";
             var time_sensor_data = data[date];
             // console.log(date);
             console.log(Object.keys(time_sensor_data));

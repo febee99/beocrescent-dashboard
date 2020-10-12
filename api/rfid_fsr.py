@@ -33,8 +33,10 @@ def rfid_fsr():
             counttime += 1
             temp_dict[extracted_time] = counttime
         else:
-            dict_info[date] = list_data
-        print(dict_info)
+            dict_info[date] = {'06:00':0, '07:00':0, '08:00':0, '09:00':0, '10:00':0, '11:00':0, '12:00':0, '13:00':0, '14:00':0, '15:00':0, '16:00':0, '17:00':0, '18:00':0, '19:00':0, '20:00':0, "21:00":0, "22:00":0, "23:00":0}
+            extracted_time = time[0:2] + ":00"
+            list_data[extracted_time] = 1
+    print(dict_info)
     return json.dumps(dict_info), 200
 
 @app.route("/tray_in", methods=["GET"])
@@ -55,9 +57,10 @@ def tray_in():
             counttime += 1
             temp_dict[extracted_time] = counttime
         else:
-            dict_info[date] = list_data
-        print(dict_info)
-    print(list_data)
+            dict_info[date] = {'06:00':0, '07:00':0, '08:00':0, '09:00':0, '10:00':0, '11:00':0, '12:00':0, '13:00':0, '14:00':0, '15:00':0, '16:00':0, '17:00':0, '18:00':0, '19:00':0, '20:00':0, "21:00":0, "22:00":0, "23:00":0}
+            extracted_time = time[0:2] + ":00"
+            list_data[extracted_time] = 1
+    print(dict_info)
     return json.dumps(list_data), 200
 
 
