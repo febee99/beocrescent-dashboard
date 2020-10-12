@@ -61,7 +61,8 @@ def tray_in():
             extracted_time = time[0:2] + ":00"
             list_data[extracted_time] = 1
     print(dict_info)
-    return json.dumps(list_data), 200
+    print("------------------------------")
+    return json.dumps(dict_info), 200
 
 
 @app.route("/tray_in_out", methods=['GET'])

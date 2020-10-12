@@ -1,7 +1,6 @@
 <template>
   <section>
     <p class="title m-5 pt-5">RFID-tagged tray-returns data</p>
-    {{ this.rfidFsrTable }}
     <!-- <div>
       <label for="example-datepicker">Choose a date</label>
       <b-form-datepicker
@@ -299,7 +298,7 @@ export default {
           .then((apiResponse) => {
             var data = apiResponse.data;
             console.log(data)
-            var date = "2020-10-11";
+            var date = "2020-10-12";
             var time_sensor_data = data[date];
             // console.log(date);
             console.log(Object.keys(time_sensor_data));
@@ -307,7 +306,8 @@ export default {
               console.log(time);
               var data1 = time_sensor_data[time];
               this.TrayIn.push(data1);
-              console.log(data1)
+              console.log("HELLO")
+              console.log(this.TrayIn)
               this.cleanerReturnInsights.datasets[1].data.push(data1)
             }
             this.rfidFsrAPIStatus = "LIVE";
