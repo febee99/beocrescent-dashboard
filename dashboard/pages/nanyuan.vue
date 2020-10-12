@@ -2,15 +2,6 @@
   <section>
     <p class="title m-5 pt-5">RFID-tagged tray-returns data</p>
     {{ this.rfidFsrTable }}
-    <!-- <div>
-      <label for="example-datepicker">Choose a date</label>
-      <b-form-datepicker
-        id="example-datepicker"
-        v-model="value"
-        class="mb-2"
-      ></b-form-datepicker>
-      <p>Value: '{{ value }}'</p>
-    </div> -->
     <div class="columns mt-5 is-vcentered is-multiline">
       <div class="column is-4 has-text-centered">
         <div class="card">

@@ -1,49 +1,40 @@
 <template>
   <section>
-    <p class="title m-5 pt-5">RFID-tagged tray-returns data</p>
+    <p class="title m-5 pt-5">Patrons tray-returns data</p>
     {{ this.rfidFsrTable }}
-    <!-- <div>
-      <label for="example-datepicker">Choose a date</label>
-      <b-form-datepicker
-        id="example-datepicker"
-        v-model="value"
-        class="mb-2"
-      ></b-form-datepicker>
-      <p>Value: '{{ value }}'</p>
-    </div> -->
     <div class="columns mt-5 is-vcentered is-multiline">
       <div class="column is-4 has-text-centered">
         <div class="card">
           <div class="card-content">
-            <line-chart ref="nanyuanLineChart" :chartData="this.cleanerReturnInsights" />
+            <line-chart ref="haicheeLineChart" :chartData="this.patronReturnInsights" />
           </div>
         </div>
       </div>
       <div class="column is-4 has-text-centered">
         <div class="card">
           <div class="card-content">
-            <pie-chart :chartData="this.nanyuanReturns" />
+            <pie-chart :chartData="this.haicheeReturns" />
           </div>
         </div>
       </div>
       <div class="column is-4 has-text-centered">
         <div class="card">
           <div class="card-content">
-            <p class="title">Other data</p>
+            <p class="title">Data Analysis</p>
             <card-widget
               class="tile is-child"
               type="is-info"
               icon="clock"
-              :number="84"
-              suffix="%"
-              label="Self-returns rate"
-              description="Percentage of patrons who cleaned up their tables after eating today"
+              :number="12"
+              suffix="pm"
+              label="Hour trays returned most"
+              description="The 1-hour time period when trays are self-returned most"
             />
 
             <card-widget
               class="tile is-child"
               type="is-info"
-              icon="clock"
+              icon="thumb-up"
               :number="84"
               suffix="%"
               label="Self-returns rate"
@@ -157,10 +148,10 @@ export default {
 
       interval: null,
 
-      nanyuanReturns: {
+      haicheeReturns: {
         labels: [
-          "Trays not returned to cleaner trolleys",
-          "Trays into cleaner trolleys",
+          "Trays not returned by patrons",
+          "Trays returned by patrons",
         ],
         datasets: [
           {
@@ -172,7 +163,7 @@ export default {
           },
         ],
       },
-      cleanerReturnInsights: {
+      patronReturnInsights: {
         labels: [
           "06:00",
           "07:00",
@@ -195,7 +186,7 @@ export default {
         ],
         datasets: [
           {
-            label: "Nan Yuan Fishball Noodle Stall",
+            label: "Hai Chee Fish Soup Stall",
             pointBackgroundColor: "white",
             borderWidth: 3,
             pointBorderColor: "#249EBF",
@@ -208,7 +199,7 @@ export default {
 
   watch: {
     rfidFsrTable: function() {
-        this.$refs.nanyuanLineChart.renderChart(this.cleanerReturnInsights)
+        this.$refs.haicheeLineChart.renderChart(this.patronReturnInsights)
     }
   },
 
@@ -269,12 +260,12 @@ export default {
               console.log(time);
               var data1 = time_sensor_data[time];
               this.rfidFsrTable.push(data1);
-              this.cleanerReturnInsights.datasets[0].data.push(data1)
-              console.log(this.cleanerReturnInsights)
+              this.patronReturnInsights.datasets[0].data.push(data1)
+              console.log(this.patronReturnInsights)
             }
             // this.rfidFsrTable = data.rfidFsrTable;
             console.log(test);
-            // console.log(this.cleanerReturnInsights.datasets.data);
+            // console.log(this.patronReturnInsights.datasets.data);
 
             this.rfidFsrAPIStatus = "LIVE";
           })
