@@ -1,51 +1,40 @@
 <template>
   <section>
-    <p class="title m-5 pt-5">RFID-tagged tray-returns data</p>
+    <p class="title m-5 pt-5">Patrons tray-returns data</p>
     {{ this.rfidFsrTable }}
-    <!-- <div>
-      <label for="example-datepicker">Choose a date</label>
-      <b-form-datepicker
-        id="example-datepicker"
-        v-model="value"
-        class="mb-2"
-      ></b-form-datepicker>
-      <p>Value: '{{ value }}'</p>
-    </div> -->
     <div class="columns mt-5 is-vcentered is-multiline">
       <div class="column is-4 has-text-centered">
         <div class="card">
           <div class="card-content">
-            <p class="title">Daily Tray Return Count</p>
-            <line-chart ref="nanyuanLineChart" :chartData="this.cleanerReturnInsights" />
+            <line-chart ref="haicheeLineChart" :chartData="this.patronReturnInsights" />
           </div>
         </div>
       </div>
       <div class="column is-4 has-text-centered">
         <div class="card">
           <div class="card-content">
-            <p class="title">Tray Return Count</p>
-            <pie-chart ref="nanyuanPieChart" :chartData="this.nanyuanReturns" />
+            <pie-chart :chartData="this.haicheeReturns" />
           </div>
         </div>
       </div>
       <div class="column is-4 has-text-centered">
         <div class="card">
           <div class="card-content">
-            <p class="title">Other data</p>
+            <p class="title">Data Analysis</p>
             <card-widget
               class="tile is-child"
               type="is-info"
               icon="clock"
-              :number="84"
-              suffix="%"
-              label="Self-returns rate"
-              description="Percentage of patrons who cleaned up their tables after eating today"
+              :number="12"
+              suffix="pm"
+              label="Hour trays returned most"
+              description="The 1-hour time period when trays are self-returned most"
             />
 
             <card-widget
               class="tile is-child"
               type="is-info"
-              icon="clock"
+              icon="thumb-up"
               :number="84"
               suffix="%"
               label="Self-returns rate"
@@ -153,19 +142,16 @@ export default {
     return {
       tableVisionAPIStatus: "Offline",
       rfidFsrAPIStatus: "Offline",
-      rfidTrayInStatus: "Offline",
       tables: [],
-      rfidTrayIn: [],
       rfidFsrTable: [],
-      TrayIn: [],
       loaded: false,
-      rfid_loaded:false,
+
       interval: null,
 
-      nanyuanReturns: {
+      haicheeReturns: {
         labels: [
-          "Patrons Return Count",
-          "Cleaner Return Count",
+          "Trays not returned by patrons",
+          "Trays returned by patrons",
         ],
         datasets: [
           {
@@ -173,11 +159,11 @@ export default {
             pointBackgroundColor: "white",
             borderWidth: 1,
             pointBorderColor: "#249EBF",
-            data: [],
+            data: [60, 200],
           },
         ],
       },
-      cleanerReturnInsights: {
+      patronReturnInsights: {
         labels: [
           "06:00",
           "07:00",
@@ -200,19 +186,10 @@ export default {
         ],
         datasets: [
           {
-            label: "Tray OUT",
-            BackgroundColor: "white",
+            label: "Hai Chee Fish Soup Stall",
+            pointBackgroundColor: "white",
             borderWidth: 3,
-            borderColor: "#ef4250",
             pointBorderColor: "#249EBF",
-            data: [],
-          },
-          {
-            label: "Tray IN",
-            BackgroundColor: "#white",
-            borderWidth: 3,
-            borderColor: "#7AD7F0",
-            pointBorderColor: "#7AD7F0",
             data: [],
           },
         ],
@@ -222,14 +199,8 @@ export default {
 
   watch: {
     rfidFsrTable: function() {
-      this.$refs.nanyuanLineChart.renderChart(this.cleanerReturnInsights)
-    },
-
-    rfidTrayIn: function() {
-      this.$ref.nanyuanPieChart.renderChart(this.nanyuanReturns)
+        this.$refs.haicheeLineChart.renderChart(this.patronReturnInsights)
     }
-
-
   },
 
   methods: {
@@ -240,13 +211,10 @@ export default {
       } else {
         // this.fetchTableVacancy();
         this.get_fsr_rfid_data();
-        this.get_rfidTrayIn();
-
         // continue polling after that
         this.interval = setInterval(() => {
         //   this.fetchTableVacancy();
           this.get_fsr_rfid_data();
-          // this.get_rfidTrayIn();
         }, 5000);
       }
     },
@@ -278,10 +246,13 @@ export default {
       if (!this.loaded) {
         this.loaded = true;
         let r = this.$axios
-          .get(API.BASE + API.RFIDFSRVISIO)
+          .get(API.BASE + API.TRAYRETURNVISION)
           .then((apiResponse) => {
             var data = apiResponse.data;
             var date = "2020-10-12";
+            // console.log(data);
+            // this.  = [];
+            var test = [];
             var time_sensor_data = data[date];
             // console.log(date);
             console.log(Object.keys(time_sensor_data));
@@ -289,27 +260,13 @@ export default {
               console.log(time);
               var data1 = time_sensor_data[time];
               this.rfidFsrTable.push(data1);
-              this.cleanerReturnInsights.datasets[0].data.push(data1)
+              this.patronReturnInsights.datasets[0].data.push(data1)
+              console.log(this.patronReturnInsights)
             }
+            // this.rfidFsrTable = data.rfidFsrTable;
+            console.log(test);
+            // console.log(this.patronReturnInsights.datasets.data);
 
-            this.rfidFsrAPIStatus = "LIVE";
-          })
-        let t = this.$axios
-          .get(API.BASE + API.RFIDTRAYIN)
-          .then((apiResponse) => {
-            var data = apiResponse.data;
-            console.log(data)
-            var date = "2020-10-11";
-            var time_sensor_data = data[date];
-            // console.log(date);
-            console.log(Object.keys(time_sensor_data));
-            for (var time of Object.keys(time_sensor_data)) {
-              console.log(time);
-              var data1 = time_sensor_data[time];
-              this.TrayIn.push(data1);
-              console.log(data1)
-              this.cleanerReturnInsights.datasets[1].data.push(data1)
-            }
             this.rfidFsrAPIStatus = "LIVE";
           })
           .catch((error) => {
@@ -327,42 +284,6 @@ export default {
             }
           });
       }
-    },
-
-
-    get_rfidTrayIn() {
-
-        this.rfid_loaded = true
-        console.log(API.RFIDTRAYINOUT)
-        let r = this.$axios
-          .get(API.BASE + API.RFIDTRAYINOUT)
-          .then((apiResponse) => {
-            var data = apiResponse.data;
-
-            var tray_in = data["CleanerReturn"]
-            var self_return = data["SelfReturn"]
-            var data1 = [tray_in, self_return]
-
-            this.nanyuanReturns.datasets[0].data.push(self_return)
-            this.nanyuanReturns.datasets[0].data.push(tray_in)
-
-            this.rfidFsrAPIStatus = "LIVE";
-          })
-          .catch((error) => {
-            this.rfidTrayInStatus = "Offline";
-            this.get_rfidTrayIn = [];
-            if (error.response != undefined) {
-              var response = error.response.data;
-              this.toastAlert(response.message, "is-danger", 5000);
-              console.log("table vision " + response.message);
-            } else {
-              if (this.rfidFsrAPIStatus != "Offline") {
-                this.toastAlert(error, "is-danger", 5000);
-                console.log("table vision " + error);
-              }
-            }
-          });
-
     },
   },
 };
