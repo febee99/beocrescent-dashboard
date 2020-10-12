@@ -1,7 +1,6 @@
 <template>
   <section>
     <p class="title m-5 pt-5">RFID-tagged tray-returns data</p>
-    {{ this.rfidFsrTable }}
     <!-- <div>
       <label for="example-datepicker">Choose a date</label>
       <b-form-datepicker
@@ -15,6 +14,7 @@
       <div class="column is-4 has-text-centered">
         <div class="card">
           <div class="card-content">
+            <p class="title">Daily Tray Return Count</p>
             <line-chart ref="nanyuanLineChart" :chartData="this.cleanerReturnInsights" />
           </div>
         </div>
@@ -22,7 +22,8 @@
       <div class="column is-4 has-text-centered">
         <div class="card">
           <div class="card-content">
-            <pie-chart :chartData="this.nanyuanReturns" />
+            <p class="title">Tray Return Count</p>
+            <pie-chart ref="nanyuanPieChart" :chartData="this.nanyuanReturns" />
           </div>
         </div>
       </div>
@@ -151,16 +152,19 @@ export default {
     return {
       tableVisionAPIStatus: "Offline",
       rfidFsrAPIStatus: "Offline",
+      rfidTrayInStatus: "Offline",
       tables: [],
+      rfidTrayIn: [],
       rfidFsrTable: [],
+      TrayIn: [],
       loaded: false,
-
+      rfid_loaded:false,
       interval: null,
 
       nanyuanReturns: {
         labels: [
-          "Trays not returned to cleaner trolleys",
-          "Trays into cleaner trolleys",
+          "Patrons Return Count",
+          "Cleaner Return Count",
         ],
         datasets: [
           {
@@ -168,7 +172,7 @@ export default {
             pointBackgroundColor: "white",
             borderWidth: 1,
             pointBorderColor: "#249EBF",
-            data: [60, 200],
+            data: [],
           },
         ],
       },
@@ -195,10 +199,19 @@ export default {
         ],
         datasets: [
           {
-            label: "Nan Yuan Fishball Noodle Stall",
-            pointBackgroundColor: "white",
+            label: "Tray OUT",
+            BackgroundColor: "white",
             borderWidth: 3,
+            borderColor: "#ef4250",
             pointBorderColor: "#249EBF",
+            data: [],
+          },
+          {
+            label: "Tray IN",
+            BackgroundColor: "#white",
+            borderWidth: 3,
+            borderColor: "#7AD7F0",
+            pointBorderColor: "#7AD7F0",
             data: [],
           },
         ],
@@ -208,8 +221,14 @@ export default {
 
   watch: {
     rfidFsrTable: function() {
-        this.$refs.nanyuanLineChart.renderChart(this.cleanerReturnInsights)
+      this.$refs.nanyuanLineChart.renderChart(this.cleanerReturnInsights)
+    },
+    
+    rfidTrayIn: function() {
+      this.$ref.nanyuanPieChart.renderChart(this.nanyuanReturns)
     }
+
+
   },
 
   methods: {
@@ -220,10 +239,13 @@ export default {
       } else {
         // this.fetchTableVacancy();
         this.get_fsr_rfid_data();
+        this.get_rfidTrayIn();
+        
         // continue polling after that
         this.interval = setInterval(() => {
         //   this.fetchTableVacancy();
           this.get_fsr_rfid_data();
+          // this.get_rfidTrayIn();
         }, 5000);
       }
     },
@@ -259,9 +281,6 @@ export default {
           .then((apiResponse) => {
             var data = apiResponse.data;
             var date = "2020-10-11";
-            // console.log(data);
-            // this.  = [];
-            var test = [];
             var time_sensor_data = data[date];
             // console.log(date);
             console.log(Object.keys(time_sensor_data));
@@ -270,12 +289,26 @@ export default {
               var data1 = time_sensor_data[time];
               this.rfidFsrTable.push(data1);
               this.cleanerReturnInsights.datasets[0].data.push(data1)
-              console.log(this.cleanerReturnInsights)
             }
-            // this.rfidFsrTable = data.rfidFsrTable;
-            console.log(test);
-            // console.log(this.cleanerReturnInsights.datasets.data);
 
+            this.rfidFsrAPIStatus = "LIVE";
+          })
+        let t = this.$axios
+          .get(API.BASE + API.RFIDTRAYIN)
+          .then((apiResponse) => {
+            var data = apiResponse.data;
+            console.log(data)
+            var date = "2020-10-11";
+            var time_sensor_data = data[date];
+            // console.log(date);
+            console.log(Object.keys(time_sensor_data));
+            for (var time of Object.keys(time_sensor_data)) {
+              console.log(time);
+              var data1 = time_sensor_data[time];
+              this.TrayIn.push(data1);
+              console.log(data1)
+              this.cleanerReturnInsights.datasets[1].data.push(data1)
+            }
             this.rfidFsrAPIStatus = "LIVE";
           })
           .catch((error) => {
@@ -293,6 +326,42 @@ export default {
             }
           });
       }
+    },
+    
+    
+    get_rfidTrayIn() {
+     
+        this.rfid_loaded = true
+        console.log(API.RFIDTRAYINOUT)
+        let r = this.$axios
+          .get(API.BASE + API.RFIDTRAYINOUT)
+          .then((apiResponse) => {
+            var data = apiResponse.data;
+
+            var tray_in = data["CleanerReturn"]
+            var self_return = data["SelfReturn"]
+            var data1 = [tray_in, self_return]
+    
+            this.nanyuanReturns.datasets[0].data.push(self_return)
+            this.nanyuanReturns.datasets[0].data.push(tray_in)
+
+            this.rfidFsrAPIStatus = "LIVE";
+          })
+          .catch((error) => {
+            this.rfidTrayInStatus = "Offline";
+            this.get_rfidTrayIn = [];
+            if (error.response != undefined) {
+              var response = error.response.data;
+              this.toastAlert(response.message, "is-danger", 5000);
+              console.log("table vision " + response.message);
+            } else {
+              if (this.rfidFsrAPIStatus != "Offline") {
+                this.toastAlert(error, "is-danger", 5000);
+                console.log("table vision " + error);
+              }
+            }
+          });
+        
     },
   },
 };
