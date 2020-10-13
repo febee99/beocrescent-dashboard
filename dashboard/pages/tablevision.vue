@@ -53,7 +53,7 @@
                             class="tile is-child notification has-background-success-light"
                             type="is-dark"
                             icon="charity"
-                            :number="24"
+                            :number="this.selfReturnsPercentage"
                             suffix="%"
                             label="Self-returns rate"
                             description="Percentage of patrons who cleaned up their tables after eating today"
@@ -62,8 +62,8 @@
                             class="tile is-child notification has-background-danger-light"
                             type="is-dark"
                             icon="silverware-clean"
-                            :number="39"
-                            suffix=" occasions"
+                            :number="this.cleanerReturnPercentage"
+                            suffix="%"
                             label="Tables cleared by cleaners today"
                             description="Tables cleared by cleaners today"
                             />
@@ -71,7 +71,7 @@
                             class="tile is-child notification has-background-warning-light"
                             type="is-dark"
                             icon="account-multiple-minus"
-                            :number="8"
+                            :number="'--'"
                             suffix="pm"
                             label="Peak lazy patron hours"
                             description="Time when people self-returned trays least"
@@ -85,11 +85,11 @@
 </template>
 
 <script>
-import CardWidget from "@/components/CardWidget";
-import CardComponent from "@/components/CardComponent";
-import LineChart from "@/components/LineChart";
-import API from "@/constants/api";
-import PieChart from "@/components/PieChart";
+import CardWidget from "@/components/CardWidget"
+import CardComponent from "@/components/CardComponent"
+import LineChart from "@/components/LineChart"
+import API from "@/constants/api"
+import PieChart from "@/components/PieChart"
 
 export default {
     components: {
@@ -97,10 +97,21 @@ export default {
         CardComponent,
     },
 
+    watch: {
+        selfReturnsPercentage: function() {
+
+        },
+    },
+
     data() {
         return {
             tableVisionAPIStatus: "Offline",
             tables: [],
+
+            selfReturnsPercentage: 0.0,
+            cleanerReturnPercentage: 0.0,
+            peakLazyReturns: 0,
+            totalOccupancy: 0
         }
     },
 
@@ -108,38 +119,63 @@ export default {
         startAPIPolling(start) {
             // call fetch for the first time
             if (!start) {
-                clearInterval(this.interval);
+                clearInterval(this.interval)
             } else {
-                this.fetchTableVacancy();
+                this.fetchTableVacancy()
 
                 // continue polling after that
-                // this.interval = setInterval(() => {
-                //      this.fetchTableVacancy();
-                // }, 10000);
+                this.interval = setInterval(() => {
+                    this.fetchTableVacancy()
+                    this.fetchStatistics()
+                }, 1000)
             }
+        },
+        fetchStatistics() {
+            let r = this.$axios
+            .get(API.BASE + API.TABLEVISIONSTATS)
+            .then((apiResponse) => {
+                var data = apiResponse.data
+                this.selfReturnsPercentage = data.self
+                this.cleanerReturnPercentage = data.cleaner
+                this.totalOccupancy = data.total
+            }).catch((error) => {
+                this.selfReturnsPercentage = 0.0
+                this.cleanerReturnPercentage = 0.0
+                this.totalOccupancy = 0
+                if (error.response != undefined) {
+                    var response = error.response.data
+                    this.toastAlert(response.message, "is-danger", 5000)
+                    console.log("table stats " + response.message)
+                } else {
+                    if (this.tableVisionAPIStatus != "Offline") {
+                    this.toastAlert(error, "is-danger", 5000)
+                    console.log("table stats " + error)
+                    }
+                }
+            })
         },
         fetchTableVacancy() {
             let r = this.$axios
-                .get(API.BASE + API.TABLEVISION)
-                .then((apiResponse) => {
-                var data = apiResponse.data;
-                this.tables = data.tables;
-                this.tableVisionAPIStatus = "LIVE";
-                })
-                .catch((error) => {
-                this.tableVisionAPIStatus = "Offline";
-                this.tables = [];
+            .get(API.BASE + API.TABLEVISION)
+            .then((apiResponse) => {
+                var data = apiResponse.data
+                this.tables = data.tables
+                this.tableVisionAPIStatus = "LIVE"
+            })
+            .catch((error) => {
+                this.tableVisionAPIStatus = "Offline"
+                this.tables = []
                 if (error.response != undefined) {
-                    var response = error.response.data;
-                    this.toastAlert(response.message, "is-danger", 5000);
-                    console.log("table vision " + response.message);
+                    var response = error.response.data
+                    this.toastAlert(response.message, "is-danger", 5000)
+                    console.log("table vision " + response.message)
                 } else {
                     if (this.tableVisionAPIStatus != "Offline") {
-                    this.toastAlert(error, "is-danger", 5000);
-                    console.log("table vision " + error);
+                    this.toastAlert(error, "is-danger", 5000)
+                    console.log("table vision " + error)
                     }
                 }
-            });
+            })
         },
     }
 }
