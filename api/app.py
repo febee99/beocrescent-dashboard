@@ -83,7 +83,8 @@ def get_return_stats():
 
     result = {
         "self": round(((self_count / total) * 100), 2),
-        "cleaner": round(((cleaner_count / total) * 100), 2)
+        "cleaner": round(((cleaner_count / total) * 100), 2),
+        "total": total
     }
 
     return jsonify(result), 200
