@@ -33,7 +33,7 @@ def get_table(table):
 @app.route('/tables/<table>', methods=['PUT'])
 def update_table_state(table):
     state = int(request.args.get('state'))
-    table = Table.objects.get(table=15)
+    table = Table.objects.get(table=table)
     table.update(set__state=state)
 
     result = {
