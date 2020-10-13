@@ -11,10 +11,25 @@ from mongoengine.fields import (
     BinaryField,
     BooleanField,
     DynamicField,
-    FloatField
+    FloatField,
+    UUIDField
 )
 
 class Table(Document):
 
     table = IntField()
     state = IntField()
+
+
+class Session(Document):
+
+    sessionId = UUIDField()
+    sessionStart = DateTimeField()
+    sessionEnd = DateTimeField()
+    states = ListField()
+    tableId = IntField()
+
+class Stat(Document):
+
+    selfReturn = IntField()
+    cleanerReturn = IntField()

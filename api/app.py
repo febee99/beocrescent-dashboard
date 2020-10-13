@@ -60,5 +60,33 @@ def get_all_tables():
 
     return jsonify(result), 200
 
+@app.route('/stats')
+def get_return_stats():
+    sessions = Session.objects
+
+    cleaner_count = 0
+    self_count = 0
+    for session in sessions:
+        if session.sessionEnd is not None:
+            states = session.states
+            if states[-2] == 1:
+                cleaner_count += 1
+            else:
+                self_count += 1
+    
+
+
+    # stats = Stat.objects[0]
+    # self = stats.selfReturn
+    # cleaner = stats.cleanerReturn
+    total = self_count + cleaner_count
+
+    result = {
+        "self": (self_count / total) * 100,
+        "cleaner": (cleaner_count / total) * 100,
+    }
+
+    return jsonify(result), 200
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
