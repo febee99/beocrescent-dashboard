@@ -37,8 +37,8 @@
             <p class="title is-size-5-touch">Tray Return Rate</p>
             <card-widget
               class="tile is-child"
-              type="is-info"
-              icon="clock"
+              type="is-success"
+              icon="charity"
               :number="this.selfReturn"
               suffix="%"
               label="Self-returns rate"
@@ -47,12 +47,12 @@
 
             <card-widget
               class="tile is-child"
-              type="is-info"
-              icon="clock"
+              type="is-danger"
+              icon="account-multiple-minus"
               :number="this.cleanerReturn"
               suffix="%"
               label="Cleaner Return rate"
-              description="Percentage of patrons who cleaned up their tables after eating today"
+              description="Percentage of patrons who left their receptacles to the cleaners today"
             />
           </div>
         </div>
