@@ -80,6 +80,13 @@ def get_return_stats():
     # self = stats.selfReturn
     # cleaner = stats.cleanerReturn
     total = self_count + cleaner_count
+    if total == 0:
+        result = {
+            "self": 0,
+            "cleaner": 0
+        }
+
+        return jsonify(result), 200
 
     result = {
         "self": round(((self_count / total) * 100), 2),
