@@ -44,79 +44,6 @@
         </div>
       </div>
     </div>
-    <br />
-    <hr />
-    <br />
-    <p class="title m-5 pt-5">Tablevision data</p>
-    <div class="columns mt-5 is-vcentered is-multiline">
-      <div class="column is-4 has-text-centered">
-        <div class="card">
-          <div class="card-content">
-            <p class="title">Table occupancy</p>
-            <p class="has-text-weight-bold">
-              API Status:
-              <span
-                :class="
-                  tableVisionAPIStatus == 'LIVE'
-                    ? 'has-text-success'
-                    : 'has-text-danger'
-                "
-                >{{ this.tableVisionAPIStatus }}</span
-              >
-            </p>
-            <b-tag
-              :type="
-                leTable.state == 0
-                  ? 'is-success'
-                  : leTable.state == 1
-                  ? 'is-warning'
-                  : 'is-danger'
-              "
-              class="my-2"
-              size="is-large"
-              :id="leTable.table"
-              v-for="leTable in tables"
-              v-bind:key="leTable.table"
-            >
-              <p>{{ leTable.table }}</p>
-            </b-tag>
-            <br />
-            <p class="subtitle has-text-left mt-5">Legend</p>
-            <b-tag type="is-success" size="is-small">
-              <p>Vacant</p>
-            </b-tag>
-            <b-tag type="is-warning" size="is-small">
-              <p>Vacant but uncleared</p>
-            </b-tag>
-            <b-tag type="is-danger" size="is-small">
-              <p>Occupied</p>
-            </b-tag>
-          </div>
-        </div>
-      </div>
-      <div class="column is-4">
-        <card-widget
-          class="tile is-child"
-          type="is-info"
-          icon="charity"
-          :number="84"
-          suffix="%"
-          label="Self-returns rate"
-          description="Percentage of patrons who cleaned up their tables after eating today"
-        />
-      </div>
-      <div class="column is-4">
-        <card-widget
-          class="tile is-child"
-          type="is-info"
-          icon="silverware-clean"
-          :number="39"
-          suffix=" occasions"
-          label="Tables cleared by cleaners today"
-          description="Tables cleared by cleaners today"
-        />
-      </div>
-    </div>
   </section>
 </template>
 
@@ -204,7 +131,7 @@ export default {
   },
 
   methods: {
-    startTableVisionAPIPolling(start) {
+    startAPIPolling(start) {
       // call fetch for the first time
       if (!start) {
         clearInterval(this.interval);
@@ -217,30 +144,6 @@ export default {
           this.get_fsr_rfid_data();
         }, 5000);
       }
-    },
-    fetchTableVacancy() {
-      let r = this.$axios
-        .get(API.BASE + API.TABLEVISION)
-        .then((apiResponse) => {
-          var data = apiResponse.data;
-
-          this.tables = data.tables;
-          this.tableVisionAPIStatus = "LIVE";
-        })
-        .catch((error) => {
-          this.tableVisionAPIStatus = "Offline";
-          this.tables = [];
-          if (error.response != undefined) {
-            var response = error.response.data;
-            this.toastAlert(response.message, "is-danger", 5000);
-            console.log("table vision " + response.message);
-          } else {
-            if (this.tableVisionAPIStatus != "Offline") {
-              this.toastAlert(error, "is-danger", 5000);
-              console.log("table vision " + error);
-            }
-          }
-        });
     },
     get_fsr_rfid_data() {
       if (!this.loaded) {

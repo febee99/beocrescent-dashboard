@@ -144,7 +144,7 @@ export default {
   },
 
   methods: {
-    startTableVisionAPIPolling(start) {
+    startAPIPolling(start) {
       // call fetch for the first time
       if (!start) {
         clearInterval(this.interval);
@@ -157,30 +157,6 @@ export default {
           this.get_fsr_rfid_data();
         }, 5000);
       }
-    },
-    fetchTableVacancy() {
-      let r = this.$axios
-        .get(API.BASE + API.TABLEVISION)
-        .then((apiResponse) => {
-          var data = apiResponse.data;
-
-          this.tables = data.tables;
-          this.tableVisionAPIStatus = "LIVE";
-        })
-        .catch((error) => {
-          this.tableVisionAPIStatus = "Offline";
-          this.tables = [];
-          if (error.response != undefined) {
-            var response = error.response.data;
-            this.toastAlert(response.message, "is-danger", 5000);
-            console.log("table vision " + response.message);
-          } else {
-            if (this.tableVisionAPIStatus != "Offline") {
-              this.toastAlert(error, "is-danger", 5000);
-              console.log("table vision " + error);
-            }
-          }
-        });
     },
     get_fsr_rfid_data() {
       if (!this.loaded) {
