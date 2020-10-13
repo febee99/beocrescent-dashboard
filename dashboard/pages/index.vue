@@ -16,6 +16,10 @@
                 <!-- soonheng.vue -->
                 <SoonHeng ref="soonheng"/>
             </b-tab-item>
+            <b-tab-item label="Tablevision" icon="cctv">
+                <!-- tablevision.vue -->
+                <Tablevision ref="tablevision"/>
+            </b-tab-item>
         </b-tabs>
 
     </section>
@@ -26,6 +30,7 @@ import Overview from '@/pages/main'
 import Nanyuan from '@/pages/nanyuan'
 import Haichee from '@/pages/haichee'
 import SoonHeng from '@/pages/soonheng'
+import Tablevision from '@/pages/tablevision'
 export default {
 
     head() {
@@ -38,7 +43,8 @@ export default {
         Overview,
         Nanyuan,
         Haichee,
-        SoonHeng
+        SoonHeng,
+        Tablevision
     },
 
     data() {
@@ -50,41 +56,47 @@ export default {
 
     watch: {
         activeTab: function() {
-          if (this.activeTab == 1) {
-              // Nanyuan Fishball Stall
-              this.triggerNYAPI()
-              this.$refs.haichee.startTableVisionAPIPolling(false)
-              this.$refs.soonheng.startTableVisionAPIPolling(false)
-          } else if (this.activeTab == 2){
-              // Haichee Fish Soup
-              this.triggerHCAPI()
-              this.$refs.nanyuan.startTableVisionAPIPolling(false)
-              this.$refs.soonheng.startTableVisionAPIPolling(false)
-          } else if (this.activeTab == 3){
-              // Soon Heng Lor Mee
-              this.triggerSHAPI()
-              this.$refs.nanyuan.startTableVisionAPIPolling(false)
-              this.$refs.haichee.startTableVisionAPIPolling(false)
-          } else {
-              this.$refs.nanyuan.startTableVisionAPIPolling(false)
-              this.$refs.haichee.startTableVisionAPIPolling(false)
-              this.$refs.soonheng.startTableVisionAPIPolling(false)
-          }
+            if (this.activeTab == 1) {
+                // Nanyuan Fishball Stall
+                this.stopAllAPI()
+                this.triggerNYAPI()
+            } else if (this.activeTab == 2){
+                // Haichee Fish Soup
+                this.stopAllAPI()
+                this.triggerHCAPI()
+            } else if (this.activeTab == 3){
+                // Soon Heng Lor Mee
+                this.stopAllAPI()
+                this.triggerSHAPI()
+            } else if (this.activeTab == 4) {
+                // Nanyuan Fishball Stall
+                this.stopAllAPI()
+                this.triggerTVAPI()
+            } else {
+                this.stopAllAPI()
+            }
         }
     },
 
     methods: {
+        stopAllAPI() {
+            // this function helps to stop all API once the tab is inactive
+            this.$refs.nanyuan.startAPIPolling(false);
+            this.$refs.tablevision.startAPIPolling(false);
+        },
         triggerNYAPI() {
             // triggers the api polling once clicked
-            this.$refs.nanyuan.startTableVisionAPIPolling(true)
+            this.$refs.nanyuan.startAPIPolling(true)
         },
         triggerHCAPI() {
             // triggers the api polling once clicked
-            this.$refs.haichee.startTableVisionAPIPolling(true)
         },
         triggerSHAPI() {
             // triggers the api polling once clicked
-            this.$refs.soonheng.startTableVisionAPIPolling(true)
+        },
+        triggerTVAPI() {
+            // triggers the api polling once clicked
+            this.$refs.tablevision.startAPIPolling(true)
         }
     }
 }
