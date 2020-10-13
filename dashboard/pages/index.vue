@@ -83,6 +83,8 @@ export default {
             // this function helps to stop all API once the tab is inactive
             this.$refs.nanyuan.startAPIPolling(false);
             this.$refs.tablevision.startAPIPolling(false);
+            this.$refs.haichee.startAPIPolling(false);
+            this.$refs.soonheng.startAPIPolling(false);
         },
         triggerNYAPI() {
             // triggers the api polling once clicked
@@ -90,9 +92,11 @@ export default {
         },
         triggerHCAPI() {
             // triggers the api polling once clicked
+            this.$refs.haichee.startAPIPolling(true)
         },
         triggerSHAPI() {
             // triggers the api polling once clicked
+            this.$refs.soonheng.startAPIPolling(true)
         },
         triggerTVAPI() {
             // triggers the api polling once clicked
