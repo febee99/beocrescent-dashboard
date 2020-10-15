@@ -79,6 +79,9 @@ export default {
         );
       }
     },
+    selfReturn: function() {
+      return this.selfReturn;
+    }
   },
   data() {
     var today = new Date();
@@ -161,7 +164,6 @@ export default {
 
   watch: {
     lineChartTable: function () {
-
       this.$refs.haichewLineChart.renderChart(this.patronReturnInsights);
     },
 
@@ -173,6 +175,7 @@ export default {
       this.patronReturnInsights.datasets[0].data =[];
       this.patronReturnInsights.datasets[1].data = [];
       this.getLineChartData();
+      this.getPieChartData();
     },
   },
 
@@ -182,13 +185,14 @@ export default {
       if (!start) {
         clearInterval(this.interval);
       } else {
+        this.getPieChartData();
         this.getLineChartData();
       }
     },
     getLineChartData() {
 
       let trays_distributed = this.$axios
-        .get(API.BASE + API.HAICHEWDISTRVISION + "/" + this.selectedDate )
+        .get(API.BASE + API.DISTRVISION + "/1/" + this.selectedDate )
         .then((apiResponse) => {
           var data = apiResponse.data;
           //console.log(Object.keys(time_sensor_data));
@@ -203,7 +207,7 @@ export default {
         });
 
       let trays_returned = this.$axios
-        .get(API.BASE + API.HAICHEWRETURNVISION + "/" + this.selectedDate )
+        .get(API.BASE + API.RETURNVISION + "/1/" + this.selectedDate )
         .then((apiResponse) => {
           var data = apiResponse.data;
           //console.log(Object.keys(time_sensor_data));
@@ -232,6 +236,44 @@ export default {
           }
         });
 
+    },
+
+    getPieChartData() {
+
+      let r = this.$axios
+        .get(API.BASE + API.STALLTOTALVISION + "/1/" + this.selectedDate)
+        .then((apiResponse) => {
+          var data = apiResponse.data;
+
+          var not_returned = data["NotReturned"];
+          var returned = data["Returned"];
+
+          var total = not_returned + returned;
+          console.log("Total: " + total);
+          console.log("Returned:" + returned);
+
+          this.selfReturn = parseFloat((returned / total) * 100).toFixed(2);
+          console.log(this.selfReturn);
+          var data1 = [not_returned, returned];
+          this.haichewReturns.datasets[0].data = [returned, not_returned];
+          this.pieChartTable.push(0);
+
+          this.rfidFsrAPIStatus = "LIVE";
+        })
+        .catch((error) => {
+          this.rfidTrayInStatus = "Offline";
+          if (error.response != undefined) {
+            var response = error.response.data;
+            this.pieChartTable = [];
+            this.toastAlert(response.message, "is-danger", 5000);
+            console.log("nanyuan " + response.message);
+          } else {
+            if (this.rfidFsrAPIStatus != "Offline") {
+              this.toastAlert(error, "is-danger", 5000);
+              console.log("nanyuan " + error);
+            }
+          }
+        });
     },
   },
 };

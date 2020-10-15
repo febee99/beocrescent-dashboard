@@ -1,62 +1,53 @@
 <template>
   <section>
-    <p class="title m-5 pt-5">Patrons tray-returns data</p>
-    {{ this.rfidFsrTable }}
-    <!-- <div>
-      <label for="example-datepicker">Choose a date</label>
-      <b-form-datepicker
-        id="example-datepicker"
-        v-model="value"
-        class="mb-2"
-      ></b-form-datepicker>
-      <p>Value: '{{ value }}'</p>
-    </div> -->
-    <div class="columns mt-5 is-vcentered is-multiline">
+    <p class="title m-5 pt-5">Weight & Infrared sensor tray-returns data</p>
+    <div></div>
+    <div class="columns mt-5 is-multiline is-tablet">
       <div class="column is-4 has-text-centered">
         <div class="card">
           <div class="card-content">
-            <line-chart ref="nanyuanLineChart" :chartData="this.cleanerReturnInsights" />
+            <p class="title is-size-5-touch">Daily Tray Return Count</p>
+            <b-field label="Select a date">
+              <b-datepicker
+                placeholder="Click to select..."
+                v-model="date"
+                :min-date="minDate"
+                :max-date="maxDate"
+              >
+              </b-datepicker>
+            </b-field>
+            <line-chart
+              ref="soonhengLineChart"
+              :chartData="this.patronReturnInsights"
+            />
           </div>
         </div>
       </div>
       <div class="column is-4 has-text-centered">
         <div class="card">
           <div class="card-content">
-            <pie-chart :chartData="this.nanyuanReturns" />
+            <p class="title is-size-5-touch">Tray Return Visualisation</p>
+            <pie-chart ref="soonhengPieChart" :chartData="this.soonhengReturns" />
           </div>
         </div>
       </div>
       <div class="column is-4 has-text-centered">
         <div class="card">
           <div class="card-content">
-          <p class="title">Data Analysis</p>
-          <card-widget
-            class="tile is-child"
-            type="is-info"
-            icon="clock"
-            :number="12"
-            suffix="pm"
-            label="Hour trays returned most"
-            description="The 1-hour time period when trays are self-returned most"
-          />
-
-          <card-widget
-            class="tile is-child"
-            type="is-info"
-            icon="thumb-up"
-            :number="84"
-            suffix="%"
-            label="Self-returns rate"
-            description="Percentage of patrons who cleaned up their tables after eating today"
-          />
+            <p class="title is-size-5-touch">Tray Return Rate</p>
+            <card-widget
+              class="tile is-child"
+              type="is-success"
+              icon="charity"
+              :number="this.selfReturn"
+              suffix="%"
+              label="At this station"
+              description="Percentage of patrons who returned their trays to this tray return point"
+            />
           </div>
         </div>
       </div>
     </div>
-    <br />
-    <hr />
-    <br />
-
   </section>
 </template>
 
@@ -64,46 +55,71 @@
 import CardWidget from "@/components/CardWidget";
 import CardComponent from "@/components/CardComponent";
 import LineChart from "@/components/LineChart";
-import PieChart from "@/components/PieChart";
 import API from "@/constants/api";
-// import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
-// Vue.use(BootstrapVue);
-// import "bootstrap/dist/css/bootstrap.css";
-// import "bootstrap-vue/dist/bootstrap-vue.css";
-// import "./custom.scss";
+import PieChart from "@/components/PieChart";
 
 export default {
   components: {
     CardWidget,
     CardComponent,
   },
-
+  computed: {
+    selectedDate: function () {
+      if (!this.date) {
+        console.log("Not this.date");
+        return "2020-10-12";
+      } else {
+        //console.log(this.date);
+        return (
+          this.date.getFullYear() +
+          "-" +
+          (parseInt(this.date.getMonth()) + 1) +
+          "-" +
+          this.date.getDate()
+        );
+      }
+    },
+    selfReturn: function() {
+      return this.selfReturn;
+    }
+  },
   data() {
+    var today = new Date();
     return {
-      tableVisionAPIStatus: "Offline",
-      rfidFsrAPIStatus: "Offline",
-      tables: [],
-      rfidFsrTable: [],
-      loaded: false,
+      date: today,
+      minDate: new Date(
+        today.getFullYear() - 80,
+        today.getMonth(),
+        today.getDate()
+      ),
+      maxDate: new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate()
+      ),
 
+      lineChartAPIStatus: "Offline",
+      lineChartTable: [],
       interval: null,
 
-      nanyuanReturns: {
-        labels: [
-          "Trays not returned by patrons",
-          "Trays returned by patrons",
-        ],
+      pieChartAPIStatus: "Offline",
+      pieChartTable: [],
+
+      selfReturn: 0,
+
+      soonhengReturns: {
+        labels: ["Trays Returned Here", "Trays Not Returned Here"],
         datasets: [
           {
             backgroundColor: ["#ee4350", "#409cd2"],
             pointBackgroundColor: "white",
             borderWidth: 1,
             pointBorderColor: "#249EBF",
-            data: [60, 200],
+            data: [],
           },
         ],
       },
-      cleanerReturnInsights: {
+      patronReturnInsights: {
         labels: [
           "06:00",
           "07:00",
@@ -126,10 +142,19 @@ export default {
         ],
         datasets: [
           {
-            label: "Soon Heng Lor Mee Stall",
-            pointBackgroundColor: "white",
+            label: "Tray distributed",
+            BackgroundColor: "white",
             borderWidth: 3,
+            borderColor: "#ef4250",
             pointBorderColor: "#249EBF",
+            data: [],
+          },
+          {
+            label: "Trays returned",
+            BackgroundColor: "#white",
+            borderWidth: 3,
+            borderColor: "#7AD7F0",
+            pointBorderColor: "#7AD7F0",
             data: [],
           },
         ],
@@ -138,9 +163,20 @@ export default {
   },
 
   watch: {
-    rfidFsrTable: function() {
-        this.$refs.nanyuanLineChart.renderChart(this.cleanerReturnInsights)
-    }
+    lineChartTable: function () {
+      this.$refs.soonhengLineChart.renderChart(this.patronReturnInsights);
+    },
+
+    pieChartTable: function () {
+      this.$refs.soonhengPieChart.renderChart(this.soonhengReturns);
+    },
+
+    date: function () {
+      this.patronReturnInsights.datasets[0].data =[];
+      this.patronReturnInsights.datasets[1].data = [];
+      this.getLineChartData();
+      this.getPieChartData();
+    },
   },
 
   methods: {
@@ -149,57 +185,95 @@ export default {
       if (!start) {
         clearInterval(this.interval);
       } else {
-        // this.fetchTableVacancy();
-        this.get_fsr_rfid_data();
-        // continue polling after that
-        this.interval = setInterval(() => {
-        //   this.fetchTableVacancy();
-          this.get_fsr_rfid_data();
-        }, 5000);
+        this.getPieChartData();
+        this.getLineChartData();
       }
     },
-    get_fsr_rfid_data() {
-      if (!this.loaded) {
-        this.loaded = true;
-        let r = this.$axios
-          .get(API.BASE + API.TRAYRETURNVISION2)
-          .then((apiResponse) => {
-            var data = apiResponse.data;
-            var date = "2020-10-12";
-            // console.log(data);
-            // this.  = [];
-            var test = [];
-            var time_sensor_data = data[date];
-            // console.log(date);
-            console.log(Object.keys(time_sensor_data));
-            for (var time of Object.keys(time_sensor_data)) {
-              console.log(time);
-              var data1 = time_sensor_data[time];
-              this.rfidFsrTable.push(data1);
-              this.cleanerReturnInsights.datasets[0].data.push(data1)
-              console.log(this.cleanerReturnInsights)
-            }
-            // this.rfidFsrTable = data.rfidFsrTable;
-            console.log(test);
-            // console.log(this.cleanerReturnInsights.datasets.data);
+    getLineChartData() {
 
-            this.rfidFsrAPIStatus = "LIVE";
-          })
-          .catch((error) => {
-            this.rfidFsrAPIStatus = "Offline";
-            this.rfidFsrTable = [];
-            if (error.response != undefined) {
-              var response = error.response.data;
-              this.toastAlert(response.message, "is-danger", 5000);
-              console.log("table vision " + response.message);
-            } else {
-              if (this.rfidFsrAPIStatus != "Offline") {
-                this.toastAlert(error, "is-danger", 5000);
-                console.log("table vision " + error);
-              }
+      let trays_distributed = this.$axios
+        .get(API.BASE + API.DISTRVISION + "/2/" + this.selectedDate )
+        .then((apiResponse) => {
+          var data = apiResponse.data;
+          //console.log(Object.keys(time_sensor_data));
+          for (var time of Object.keys(data)) {
+            //console.log(time);
+            var data1 = data[time];
+            this.lineChartTable.push(data1);
+            this.patronReturnInsights.datasets[0].data.push(data1);
+          }
+
+          this.lineChartAPIStatus = "LIVE";
+        });
+
+      let trays_returned = this.$axios
+        .get(API.BASE + API.RETURNVISION + "/2/" + this.selectedDate )
+        .then((apiResponse) => {
+          var data = apiResponse.data;
+          //console.log(Object.keys(time_sensor_data));
+          for (var time of Object.keys(data)) {
+            //console.log(time);
+            var data1 = data[time];
+            this.lineChartTable.push(data1);
+            this.patronReturnInsights.datasets[1].data.push(data1);
+
+        }
+
+        this.lineChartAPIStatus = "LIVE";
+        })
+        .catch((error) => {
+          this.lineChartAPIStatus = "Offline";
+          this.lineChartTable = [];
+          if (error.response != undefined) {
+            var response = error.response.data;
+            this.toastAlert(response.message, "is-danger", 5000);
+            console.log("nanyuan " + response.message);
+          } else {
+            if (this.lineChartAPIStatus != "Offline") {
+              this.toastAlert(error, "is-danger", 5000);
+              console.log("nanyuan " + error);
             }
-          });
-      }
+          }
+        });
+
+    },
+
+    getPieChartData() {
+
+      let r = this.$axios
+        .get(API.BASE + API.STALLTOTALVISION + "/2/" + this.selectedDate)
+        .then((apiResponse) => {
+          var data = apiResponse.data;
+
+          var not_returned = data["NotReturned"];
+          var returned = data["Returned"];
+
+          var total = not_returned + returned;
+          console.log("Total: " + total);
+          console.log("Returned:" + returned);
+
+          this.selfReturn = parseFloat((returned / total) * 100).toFixed(2);
+          console.log(this.selfReturn);
+          var data1 = [not_returned, returned];
+          this.soonhengReturns.datasets[0].data = [returned, not_returned];
+          this.pieChartTable.push(0);
+
+          this.rfidFsrAPIStatus = "LIVE";
+        })
+        .catch((error) => {
+          this.rfidTrayInStatus = "Offline";
+          if (error.response != undefined) {
+            var response = error.response.data;
+            this.pieChartTable = [];
+            this.toastAlert(response.message, "is-danger", 5000);
+            console.log("nanyuan " + response.message);
+          } else {
+            if (this.rfidFsrAPIStatus != "Offline") {
+              this.toastAlert(error, "is-danger", 5000);
+              console.log("nanyuan " + error);
+            }
+          }
+        });
     },
   },
 };
