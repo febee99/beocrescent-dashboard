@@ -40,6 +40,7 @@
               type="is-success"
               icon="charity"
               :number="this.selfReturn"
+              :key="selfReturn"
               suffix="%"
               label="At this station"
               description="Percentage of patrons who returned their trays to this tray return point"
@@ -78,9 +79,6 @@ export default {
           this.date.getDate()
         );
       }
-    },
-    selfReturn: function() {
-      return this.selfReturn;
     }
   },
   data() {
@@ -168,7 +166,9 @@ export default {
     },
 
     pieChartTable: function () {
+
       this.$refs.soonhengPieChart.renderChart(this.soonhengReturns);
+
     },
 
     date: function () {
@@ -176,7 +176,7 @@ export default {
       this.patronReturnInsights.datasets[1].data = [];
       this.getLineChartData();
       this.getPieChartData();
-    },
+    }
   },
 
   methods: {
@@ -187,6 +187,7 @@ export default {
       } else {
         this.getPieChartData();
         this.getLineChartData();
+
       }
     },
     getLineChartData() {
@@ -252,16 +253,15 @@ export default {
           console.log("Total: " + total);
           console.log("Returned:" + returned);
 
-          this.selfReturn = parseFloat((returned / total) * 100).toFixed(2);
+          this.selfReturn = parseFloat((returned / total) * 100).toFixed(0);
           console.log(this.selfReturn);
           var data1 = [not_returned, returned];
           this.soonhengReturns.datasets[0].data = [returned, not_returned];
           this.pieChartTable.push(0);
-
           this.rfidFsrAPIStatus = "LIVE";
         })
         .catch((error) => {
-          this.rfidTrayInStatus = "Offline";
+          this.pieChartAPIStatus = "Offline";
           if (error.response != undefined) {
             var response = error.response.data;
             this.pieChartTable = [];
