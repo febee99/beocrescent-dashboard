@@ -15,7 +15,7 @@ connect("iot", host="mongodb+srv://root:0NqePorN2WDm7xYc@cluster0.fvp4p.mongodb.
 @app.route('/tables/<table>')
 def get_table(table):
     # error handling not done, the get method will result in error if id not found
-    table = Table.objects.get(table=15)
+    table = Table.objects.get(table=table)
 
     # currently returning the state integer
     # 0 - vacant
@@ -79,6 +79,42 @@ def get_return_stats():
     # stats = Stat.objects[0]
     # self = stats.selfReturn
     # cleaner = stats.cleanerReturn
+    total = self_count + cleaner_count
+    if total == 0:
+        result = {
+            "self": 0,
+            "cleaner": 0
+        }
+
+        return jsonify(result), 200
+
+    result = {
+        "self": round(((self_count / total) * 100), 2),
+        "cleaner": round(((cleaner_count / total) * 100), 2),
+        "total": total
+    }
+
+    return jsonify(result), 200
+
+
+@app.route('/stats/<dt>')
+def get_return_stats_dt(dt):
+    # format should be dd-mm-yyyy
+    sessions = Session.objects
+    # the_date = (datetime.now() + timedelta(hours=8)).date()
+    the_date_object = datetime.strptime(dt, '%d-%m-%Y')
+    the_date = (the_date_object + timedelta(hours=8)).date()
+
+    cleaner_count = 0
+    self_count = 0
+    for session in sessions:
+        if session.sessionEnd is not None and the_date == session.sessionStart.date():
+            states = session.states
+            if states[-2] == 1:
+                cleaner_count += 1
+            else:
+                self_count += 1
+    
     total = self_count + cleaner_count
     if total == 0:
         result = {
