@@ -99,7 +99,6 @@ export default {
       lineChartAPIStatus: "Offline",
       lineChartTable: [],
       interval: null,
-
       pieChartAPIStatus: "Offline",
       pieChartTable: [],
 
@@ -185,9 +184,15 @@ export default {
       if (!start) {
         clearInterval(this.interval);
       } else {
-        this.getPieChartData();
-        this.getLineChartData();
-
+        // this.getPieChartData();
+        // this.getLineChartData();
+        this.interval = setInterval(() => {
+                          this.patronReturnInsights.datasets[0].data =[];
+                          this.patronReturnInsights.datasets[1].data = [];
+                          this.getLineChartData()
+                          this.getPieChartData()
+                            
+                        }, 5000);
       }
     },
     getLineChartData() {
