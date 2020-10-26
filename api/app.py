@@ -14,21 +14,27 @@ connect("iot", host="mongodb+srv://root:0NqePorN2WDm7xYc@cluster0.fvp4p.mongodb.
 
 @app.route('/tables/<table>')
 def get_table(table):
-    # error handling not done, the get method will result in error if id not found
-    table = Table.objects.get(table=table)
+    try:
+        # error handling not done, the get method will result in error if id not found
+        table = Table.objects.get(table=table)
 
-    # currently returning the state integer
-    # 0 - vacant
-    # 1 - vacant but uncleared
-    # 2 - occupied
-    print(table.state)
+        # currently returning the state integer
+        # 0 - vacant
+        # 1 - vacant but uncleared
+        # 2 - occupied
+        print(table.state)
 
-    result = {
-        "table": table.table,
-        "state": table.state
-    }
+        result = {
+            "table": table.table,
+            "state": table.state
+        }
 
-    return jsonify(result), 200
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({
+            "type": "error",
+            "message": str(e)
+        }), 500
 
 @app.route('/tables/<table>', methods=['PUT'])
 def update_table_state(table):
