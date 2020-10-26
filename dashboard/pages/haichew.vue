@@ -108,7 +108,7 @@ export default {
         labels: ["Trays Returned Here", "Trays Not Returned Here"],
         datasets: [
           {
-            backgroundColor: ["#ee4350", "#409cd2"],
+            backgroundColor: ["#409cd2", "#ee4350"],
             pointBackgroundColor: "white",
             borderWidth: 1,
             pointBorderColor: "#249EBF",
@@ -171,6 +171,8 @@ export default {
     },
 
     date: function () {
+      
+      this.haichewReturns.datasets[0].data = [];
       this.patronReturnInsights.datasets[0].data =[];
       this.patronReturnInsights.datasets[1].data = [];
       this.getLineChartData();
@@ -184,15 +186,14 @@ export default {
       if (!start) {
         clearInterval(this.interval);
       } else {
-        // this.getPieChartData();
-        // this.getLineChartData();
+        this.getPieChartData()
+        this.getLineChartData()
         this.interval = setInterval(() => {
                           this.patronReturnInsights.datasets[0].data =[];
                           this.patronReturnInsights.datasets[1].data = [];
-                          this.getLineChartData()
                           this.getPieChartData()
-                            
-                        }, 5000);
+                          this.getLineChartData()
+                        }, 10000);
       }
     },
     getLineChartData() {

@@ -62,6 +62,7 @@ def g6traydistr(stall_id, date_wanted):
 def g6total(stall_id, date_wanted):
     total_distr = 0
     data = stall_distribution.find({"rasp_id": int(stall_id)})
+    #data = stall_distribution.find({"sensor_id": 26}) 
     for x in data:
         datetime = str(x["datetime"])
         d = datetime.replace(",", "-")
@@ -78,8 +79,8 @@ def g6total(stall_id, date_wanted):
         if date == date_wanted:
             total_return += 1
 
-    not_returned = total_distr - total_return
-    data = {"NotReturned": not_returned, "Returned": total_return}
+    not_returned = total_distr - total_return 
+    data = {"NotReturned": not_returned , "Returned": total_return}
     print(data)
     return json.dumps(data), 200
 
