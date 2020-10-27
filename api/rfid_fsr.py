@@ -13,7 +13,7 @@ CORS(app)
 
 db = client['fsr_rfid']
 collection = db['collection']
-tray_in_data = db["tray_in"]
+tray_in_data = db["tray_in_updated"]
 
 @app.route("/rfid_fsr", methods=['GET'])
 def rfid_fsr():
