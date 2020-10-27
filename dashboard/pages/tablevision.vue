@@ -286,7 +286,7 @@ export default {
                         this.tablevisionChartData.datasets[1].data.push(stats[hour].self_count)
                     }
                 }
-                this.maxLazyHour = this.indexOfMax(this.tablevisionChartData.datasets[0].data.push(stats[hour].cleaner_count))
+                this.maxLazyHour = this.indexOfMax(this.tablevisionChartData.datasets[0].data)
 
                 if (this.maxLazyHour >= 6) {
                     this.ampm = "pm"
