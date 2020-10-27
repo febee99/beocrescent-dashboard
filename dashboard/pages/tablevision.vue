@@ -64,8 +64,8 @@
                             icon="silverware-clean"
                             :number="this.cleanerReturnPercentage"
                             suffix="%"
-                            label="Tables cleared by cleaners today"
-                            description="Tables cleared by cleaners today"
+                            label="Rate of tables cleared by cleaners today"
+                            description="Tables cleared by cleaners today in percentage"
                             />
                             <card-widget
                             class="tile is-child notification has-background-warning-light"
@@ -281,8 +281,8 @@ export default {
 
                 for (var hour in stats) {
                     if (stats[hour].total != 0) {
-                        this.tablevisionChartData.datasets[0].data.push(stats[hour].cleaner_count)
-                        this.tablevisionChartData.datasets[1].data.push(stats[hour].self_count)
+                        this.tablevisionChartData.datasets[0].data.push(stats[hour].true_cleaner_count)
+                        this.tablevisionChartData.datasets[1].data.push(stats[hour].true_self_count)
                     }
                 }
                 this.maxLazyHour = this.indexOfMax(this.tablevisionChartData.datasets[0].data)

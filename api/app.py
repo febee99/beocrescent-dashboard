@@ -144,9 +144,9 @@ def hour_formatter(total, hour_dict):
             "total": total
         }
 
-    print(hour_dict)
-
     return {
+        "true_self_count": hour_dict["self_count"],
+        "true_cleaner_count": hour_dict["cleaner_count"],
         "self_count": round(((hour_dict["self_count"] / total) * 100), 2),
         "cleaner_count": round(((hour_dict["cleaner_count"] / total) * 100), 2),
         "total": total
