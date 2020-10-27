@@ -17,7 +17,7 @@
               </b-datepicker>
             </b-field>
             <line-chart
-              ref="soonhengLineChart"
+              ref="haichewLineChart"
               :chartData="this.patronReturnInsights"
             />
           </div>
@@ -27,7 +27,7 @@
         <div class="card">
           <div class="card-content">
             <p class="title is-size-5-touch">Tray Return Visualisation</p>
-            <pie-chart ref="soonhengPieChart" :chartData="this.soonhengReturns" />
+            <pie-chart ref="haichewPieChart" :chartData="this.haichewReturns" />
           </div>
         </div>
       </div>
@@ -105,7 +105,7 @@ export default {
 
       selfReturn: 0,
 
-      soonhengReturns: {
+      haichewReturns: {
         labels: ["Trays Returned Here", "Trays Not Returned Here"],
         datasets: [
           {
@@ -162,12 +162,12 @@ export default {
 
   watch: {
     lineChartTable: function () {
-      this.$refs.soonhengLineChart.renderChart(this.patronReturnInsights);
+      this.$refs.haichewLineChart.renderChart(this.patronReturnInsights);
     },
 
     pieChartTable: function () {
 
-      this.$refs.soonhengPieChart.renderChart(this.soonhengReturns);
+      this.$refs.haichewPieChart.renderChart(this.haichewReturns);
 
     },
 
@@ -193,7 +193,7 @@ export default {
     getLineChartData() {
 
       let trays_distributed = this.$axios
-        .get(API.BASE + API.DISTRVISION + "/2/" + this.selectedDate )
+        .get(API.BASE + API.DISTRVISION + "/1/" + this.selectedDate )
         .then((apiResponse) => {
           var data = apiResponse.data;
           //console.log(Object.keys(time_sensor_data));
@@ -208,7 +208,7 @@ export default {
         });
 
       let trays_returned = this.$axios
-        .get(API.BASE + API.RETURNVISION + "/2/" + this.selectedDate )
+        .get(API.BASE + API.RETURNVISION + "/1/" + this.selectedDate )
         .then((apiResponse) => {
           var data = apiResponse.data;
           //console.log(Object.keys(time_sensor_data));
@@ -242,7 +242,7 @@ export default {
     getPieChartData() {
 
       let r = this.$axios
-        .get(API.BASE + API.STALLTOTALVISION + "/2/" + this.selectedDate)
+        .get(API.BASE + API.STALLTOTALVISION + "/1/" + this.selectedDate)
         .then((apiResponse) => {
           var data = apiResponse.data;
 
@@ -256,7 +256,7 @@ export default {
           this.selfReturn = parseFloat((returned / total) * 100).toFixed(0);
           console.log(this.selfReturn);
           var data1 = [not_returned, returned];
-          this.soonhengReturns.datasets[0].data = [returned, not_returned];
+          this.haichewReturns.datasets[0].data = [returned, not_returned];
           this.pieChartTable.push(0);
           this.rfidFsrAPIStatus = "LIVE";
         })

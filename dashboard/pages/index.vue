@@ -8,9 +8,9 @@
                 <!-- nanyuan.vue -->
                 <Nanyuan ref="nanyuan"/>
             </b-tab-item>
-            <b-tab-item label="Hai Chee Fish Soup" icon="rice">
-                <!-- haichee.vue -->
-                <Haichee ref="haichee"/>
+            <b-tab-item label="Hai Chew Fish Soup" icon="rice">
+                <!-- haichew.vue -->
+                <Haichew ref="haichew"/>
             </b-tab-item>
             <b-tab-item label="Soon Heng Lor Mee" icon="silverware-variant">
                 <!-- soonheng.vue -->
@@ -28,7 +28,7 @@
 <script>
 import Overview from '@/pages/main'
 import Nanyuan from '@/pages/nanyuan'
-import Haichee from '@/pages/haichee'
+import Haichew from '@/pages/haichew'
 import SoonHeng from '@/pages/soonheng'
 import Tablevision from '@/pages/tablevision'
 export default {
@@ -42,7 +42,7 @@ export default {
     components: {
         Overview,
         Nanyuan,
-        Haichee,
+        Haichew,
         SoonHeng,
         Tablevision
     },
@@ -61,7 +61,7 @@ export default {
                 this.stopAllAPI()
                 this.triggerNYAPI()
             } else if (this.activeTab == 2){
-                // Haichee Fish Soup
+                // Haichew Fish Soup
                 this.stopAllAPI()
                 this.triggerHCAPI()
             } else if (this.activeTab == 3){
@@ -83,7 +83,7 @@ export default {
             // this function helps to stop all API once the tab is inactive
             this.$refs.nanyuan.startAPIPolling(false);
             this.$refs.tablevision.startAPIPolling(false);
-            this.$refs.haichee.startAPIPolling(false);
+            this.$refs.haichew.startAPIPolling(false);
             this.$refs.soonheng.startAPIPolling(false);
         },
         triggerNYAPI() {
@@ -92,7 +92,7 @@ export default {
         },
         triggerHCAPI() {
             // triggers the api polling once clicked
-            this.$refs.haichee.startAPIPolling(true)
+            this.$refs.haichew.startAPIPolling(true)
         },
         triggerSHAPI() {
             // triggers the api polling once clicked
