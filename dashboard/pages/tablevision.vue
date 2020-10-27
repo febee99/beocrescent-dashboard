@@ -280,7 +280,6 @@ export default {
                 this.hourlyStats = stats
 
                 for (var hour in stats) {
-                    console.log
                     if (stats[hour].total != 0) {
                         this.tablevisionChartData.datasets[0].data.push(stats[hour].cleaner_count)
                         this.tablevisionChartData.datasets[1].data.push(stats[hour].self_count)
