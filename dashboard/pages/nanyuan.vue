@@ -281,7 +281,7 @@ export default {
         })
         .catch((error) => {
           this.rfidTrayInStatus = "Offline";
-          this.getRfidTrayIn = [];
+          this.rfidTrayIn = [];
           if (error.response != undefined) {
             var response = error.response.data;
             this.toastAlert(response.message, "is-danger", 5000);
