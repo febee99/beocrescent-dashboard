@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Mongo Initialization
-connect("iot", host="mongodb+srv://root:0NqePorN2WDm7xYc@cluster0.fvp4p.mongodb.net/iot?retryWrites=true&w=majority")
+connect("iot", host="mongodb+srv://root:0NqePorN2WDm7xYc@cluster0.fvp4p.mongodb.net/iot?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE")
 
 
 @app.route('/tables/<table>')

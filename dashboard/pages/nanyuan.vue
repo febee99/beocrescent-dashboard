@@ -261,7 +261,8 @@ export default {
 
           var tray_in = data["CleanerReturn"];
           var self_return = data["SelfReturn"];
-
+          console.log(tray_in)
+          console.log(self_return)
           var total = self_return + tray_in;
 
           this.cleanerReturn = parseFloat((tray_in / total) * 100).toFixed(2);
