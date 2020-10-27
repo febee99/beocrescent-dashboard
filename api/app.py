@@ -138,5 +138,67 @@ def get_return_stats_dt(dt):
 
     return jsonify(result), 200
 
+def hour_formatter(total, hour_dict):
+    if total == 0:
+        return {
+            "total": total
+        }
+
+    print(hour_dict)
+
+    return {
+        "self_count": round(((hour_dict["self_count"] / total) * 100), 2),
+        "cleaner_count": round(((hour_dict["cleaner_count"] / total) * 100), 2),
+        "total": total
+    }
+
+@app.route('/stats/per_hour/<dt>')
+def get_return_stats_hour_day(dt):
+    try:
+        # format should be dd-mm-yyyy
+        sessions = Session.objects
+        # the_date = (datetime.now() + timedelta(hours=8)).date()
+        the_date_object = datetime.strptime(dt, '%d-%m-%Y')
+        the_date = (the_date_object + timedelta(hours=8)).date()
+
+        hours = {
+            "6": {"self_count": 0, "cleaner_count": 0, "total": 0},
+            "7": {"self_count": 0, "cleaner_count": 0, "total": 0},
+            "8": {"self_count": 0, "cleaner_count": 0, "total": 0},
+            "9": {"self_count": 0, "cleaner_count": 0, "total": 0},
+            "10": {"self_count": 0, "cleaner_count": 0, "total": 0},
+            "11": {"self_count": 0, "cleaner_count": 0, "total": 0},
+            "12": {"self_count": 0, "cleaner_count": 0, "total": 0},
+            "13": {"self_count": 0, "cleaner_count": 0, "total": 0},
+            "14": {"self_count": 0, "cleaner_count": 0, "total": 0},
+            "15": {"self_count": 0, "cleaner_count": 0, "total": 0},
+            "16": {"self_count": 0, "cleaner_count": 0, "total": 0},
+            "17": {"self_count": 0, "cleaner_count": 0, "total": 0},
+            "18": {"self_count": 0, "cleaner_count": 0, "total": 0},
+            "19": {"self_count": 0, "cleaner_count": 0, "total": 0},
+            "20": {"self_count": 0, "cleaner_count": 0, "total": 0}
+        }
+            
+        for session in sessions:
+            if session.sessionEnd is not None and the_date == session.sessionStart.date():
+                session_hour = str(session.sessionEnd.hour)
+                if session_hour in hours:
+                    states = session.states
+                    if states[-2] == 1:
+                        hours[session_hour]["cleaner_count"] += 1
+                    else:
+                        hours[session_hour]["self_count"] += 1
+                    hours[session_hour]["total"] += 1
+
+        for hour in hours:
+            hours[hour] = hour_formatter(hours[hour]["total"], hours[hour])
+
+        return jsonify(hours), 200
+    except Exception as e:
+        return ({
+            "type": "error",
+            "message": str(e)
+        }), 500
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
