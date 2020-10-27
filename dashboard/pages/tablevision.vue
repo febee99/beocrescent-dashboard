@@ -71,9 +71,9 @@
                             class="tile is-child notification has-background-warning-light"
                             type="is-dark"
                             icon="account-multiple-minus"
-                            :number="'--'"
-                            suffix="pm"
-                            label="Peak lazy patron hours"
+                            :number="this.lazyHour"
+                            :suffix="this.ampm"
+                            label="Peak lazy patron time"
                             description="Time when people self-returned trays least"
                             />
                         </div>
@@ -118,6 +118,10 @@ export default {
             peakLazyReturns: 0,
             totalOccupancy: 0,
 
+            maxLazyHour: 6,
+            ampm: "am",
+            timing: [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+            lazyHour: 6,
             hourlyStats: [],
 
             date: new Date(),
@@ -195,6 +199,23 @@ export default {
     },
 
     methods: {
+        indexOfMax(arr) {
+            if (arr.length === 0) {
+                return -1;
+            }
+
+            var max = arr[0];
+            var maxIndex = 0;
+
+            for (var i = 1; i < arr.length; i++) {
+                if (arr[i] > max) {
+                    maxIndex = i;
+                    max = arr[i];
+                }
+            }
+
+            return maxIndex;
+        },
         startAPIPolling(start) {
             // call fetch for the first time
             if (!start) {
@@ -218,6 +239,14 @@ export default {
                 this.selfReturnsPercentage = data.self
                 this.cleanerReturnPercentage = data.cleaner
                 this.totalOccupancy = data.total
+
+                this.maxLazyHour = this.indexOfMax(this.tablevisionChartData.datasets[0].data)
+
+                if (this.maxLazyHour >= 6) {
+                    this.ampm = "pm"
+                }
+
+                this.lazyHour = this.timing[this.maxLazyHour]
             }).catch((error) => {
                 this.selfReturnsPercentage = 0.0
                 this.cleanerReturnPercentage = 0.0
@@ -228,8 +257,8 @@ export default {
                     console.log("table stats " + response.message)
                 } else {
                     if (this.tableVisionAPIStatus != "Offline") {
-                    this.toastAlert(error, "is-danger", 5000)
-                    console.log("table stats " + error)
+                        this.toastAlert(error, "is-danger", 5000)
+                        console.log("table stats " + error)
                     }
                 }
             })
@@ -257,6 +286,13 @@ export default {
                         this.tablevisionChartData.datasets[1].data.push(stats[hour].self_count)
                     }
                 }
+                this.maxLazyHour = this.indexOfMax(this.tablevisionChartData.datasets[0].data.push(stats[hour].cleaner_count))
+
+                if (this.maxLazyHour >= 6) {
+                    this.ampm = "pm"
+                }
+
+                this.lazyHour = this.timing[this.maxLazyHour]
             })
             .catch((error) => {
                 this.tableVisionAPIStatus = "Offline"
