@@ -127,6 +127,7 @@ export default {
       },
       cleanerReturnInsights: {
         labels: [
+          "05:00",
           "06:00",
           "07:00",
           "08:00",
@@ -197,6 +198,7 @@ export default {
       // if (!this.loaded) {
       // this.loaded = true;
       this.cleanerReturnInsights.datasets[0].data = [];
+      this.cleanerReturnInsights.datasets[1].data = [];
       let r = this.$axios
         .get(API.BASE + API.RFIDFSRVISIO)
         .then((apiResponse) => {
@@ -282,7 +284,7 @@ export default {
         })
         .catch((error) => {
           this.rfidTrayInStatus = "Offline";
-          this.getRfidTrayIn = [];
+          this.getRfidTrayIn1 = [];
           if (error.response != undefined) {
             var response = error.response.data;
             this.toastAlert(response.message, "is-danger", 5000);

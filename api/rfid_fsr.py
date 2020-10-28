@@ -13,14 +13,17 @@ CORS(app)
 
 db = client['fsr_rfid']
 collection = db['collection']
-tray_in_data = db["tray_in_updated"]
+
+db1 = client['fsr_rfid']
+tray_in_data = db1["tray_in_updated"]
 
 @app.route("/rfid_fsr", methods=['GET'])
 def rfid_fsr():
     data = collection.find()
     dict_info = {}
-    list_data = {'06:00':0, '07:00':0, '08:00':0, '09:00':0, '10:00':0, '11:00':0, '12:00':0, '13:00':0, '14:00':0, '15:00':0, '16:00':0, '17:00':0, '18:00':0, '19:00':0, '20:00':0, "21:00":0, "22:00":0, "23:00":0}
+    list_data = {'05:00':0, '06:00':0, '07:00':0, '08:00':0, '09:00':0, '10:00':0, '11:00':0, '12:00':0, '13:00':0, '14:00':0, '15:00':0, '16:00':0, '17:00':0, '18:00':0, '19:00':0, '20:00':0, "21:00":0, "22:00":0, "23:00":0}
     for single_data in data:
+        print(single_data)
         fsr_status = single_data["fsr_status"]
         timestamp = str(single_data["timestamp"])
         rfid_status = single_data["rfid_status"]
@@ -33,7 +36,7 @@ def rfid_fsr():
             counttime += 1
             temp_dict[extracted_time] = counttime
         else:
-            dict_info[date] = {'06:00':0, '07:00':0, '08:00':0, '09:00':0, '10:00':0, '11:00':0, '12:00':0, '13:00':0, '14:00':0, '15:00':0, '16:00':0, '17:00':0, '18:00':0, '19:00':0, '20:00':0, "21:00":0, "22:00":0, "23:00":0}
+            dict_info[date] = {'05:00':0, '06:00':0, '07:00':0, '08:00':0, '09:00':0, '10:00':0, '11:00':0, '12:00':0, '13:00':0, '14:00':0, '15:00':0, '16:00':0, '17:00':0, '18:00':0, '19:00':0, '20:00':0, "21:00":0, "22:00":0, "23:00":0}
             extracted_time = time[0:2] + ":00"
             list_data[extracted_time] = 1
     print(dict_info)
@@ -43,7 +46,7 @@ def rfid_fsr():
 def tray_in():
     data = tray_in_data.find()
     dict_info = {}
-    list_data = {'06:00':0, '07:00':0, '08:00':0, '09:00':0, '10:00':0, '11:00':0, '12:00':0, '13:00':0, '14:00':0, '15:00':0, '16:00':0, '17:00':0, '18:00':0, '19:00':0, '20:00':0, "21:00":0, "22:00":0, "23:00":0}
+    list_data = {'05:00':0,'06:00':0, '07:00':0, '08:00':0, '09:00':0, '10:00':0, '11:00':0, '12:00':0, '13:00':0, '14:00':0, '15:00':0, '16:00':0, '17:00':0, '18:00':0, '19:00':0, '20:00':0, "21:00":0, "22:00":0, "23:00":0}
     for single_data in data:
         print(single_data)
         status_count = single_data["status_count"]
@@ -57,9 +60,10 @@ def tray_in():
             counttime += status_count
             temp_dict[extracted_time] = counttime
         else:
-            dict_info[date] = {'06:00':0, '07:00':0, '08:00':0, '09:00':0, '10:00':0, '11:00':0, '12:00':0, '13:00':0, '14:00':0, '15:00':0, '16:00':0, '17:00':0, '18:00':0, '19:00':0, '20:00':0, "21:00":0, "22:00":0, "23:00":0}
+            dict_info[date] = {'05:00':0,'06:00':0, '07:00':0, '08:00':0, '09:00':0, '10:00':0, '11:00':0, '12:00':0, '13:00':0, '14:00':0, '15:00':0, '16:00':0, '17:00':0, '18:00':0, '19:00':0, '20:00':0, "21:00":0, "22:00":0, "23:00":0}
             extracted_time = time[0:2] + ":00"
             list_data[extracted_time] = status_count
+    print(dict_info)
     return json.dumps(dict_info), 200
 
 
@@ -76,4 +80,4 @@ def tray_in_out():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(host='0.0.0.0', port=5008, debug=True)
