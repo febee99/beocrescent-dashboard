@@ -204,6 +204,7 @@ export default {
         .then((apiResponse) => {
           var data = apiResponse.data;
           var date = this.selectedDate;
+          console.log(date)
           var time_sensor_data = data[date];
           // console.log(date);
           console.log(Object.keys(time_sensor_data));

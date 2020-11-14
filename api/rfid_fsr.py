@@ -28,9 +28,16 @@ def rfid_fsr():
         timestamp = str(single_data["timestamp"])
         rfid_status = single_data["rfid_status"]
         date = timestamp.split(" ")[0]
+        date = date.split("-")
+        if date[2][0] == "0":
+            date = date[0] + "-" + date[1] + "-" + date[2][1:]
+        else:
+            date = date[0] + "-" + date[1] + "-" + date[2]
+        print(date)
         time = timestamp.split(" ")[1][:5]
         if date in dict_info:
             temp_dict = dict_info[date]
+            print(temp_dict)
             extracted_time = time[0:2] + ":00"
             counttime = temp_dict[extracted_time] 
             counttime += 1
@@ -53,6 +60,11 @@ def tray_in():
         timestamp = str(single_data["timestamp"])
         date = timestamp.split(" ")[0]
         time = timestamp.split(" ")[1][:5]
+        date = date.split("-")
+        if date[2][0] == "0":
+            date = date[0] + "-" + date[1] + "-" + date[2][1:]
+        else:
+            date = date[0] + "-" + date[1] + "-" + date[2]
         if date in dict_info:
             temp_dict = dict_info[date]
             extracted_time = time[0:2] + ":00"
