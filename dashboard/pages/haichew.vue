@@ -68,15 +68,17 @@ export default {
     selectedDate: function () {
       if (!this.date) {
         console.log("Not this.date");
+        console.log(this.date.getDate());
         return "2020-10-12";
       } else {
-        //console.log(this.date);
+        // console.log(this.date);
+        // console.log((this.date.getDate() + "").length);
         return (
           this.date.getFullYear() +
           "-" +
           (parseInt(this.date.getMonth()) + 1) +
           "-" +
-          this.date.getDate()
+          ((this.date.getDate() + "").length == 1 ? "0" + this.date.getDate() : this.date.getDate())
         );
       }
     }
