@@ -8,10 +8,10 @@ export const base = localBase;
 
 export const tableVision = base == localBase ? ':5000/tables' : '/tables';
 export const tableVisionStats = base == localBase ? ':5000/stats' : '/stats';
-export const rfidFsrVision = base == localBase ? ':5001/rfid_fsr' : '';
+export const rfidFsrVision = base == localBase ? ':5008/rfid_fsr' : '';
 
-export const rfidTrayInOut = base == localBase ? ':5001/tray_in_out' : '';
-export const rfidTrayIn = base == localBase ? ':5001/tray_in' : '';
+export const rfidTrayInOut = base == localBase ? ':5008/tray_in_out' : '';
+export const rfidTrayIn = base == localBase ? ':5008/tray_in' : '';
 
 export const returnVision = base == localBase ? ':5002/g6trayreturn' : '';
 export const distrVision = base == localBase ? ':5002/g6traydistr' : '';
