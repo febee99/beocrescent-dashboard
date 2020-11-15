@@ -2,7 +2,7 @@
     <section class="section">
         <b-tabs position="is-centered" size="is-medium" class="block" v-model="activeTab">
             <b-tab-item label="Overview" icon="information-variant">
-                <Overview/>
+                <Overview ref="overview"/>
             </b-tab-item>
             <b-tab-item label="Nan Yuan Fishball" icon="noodles">
                 <!-- nanyuan.vue -->
@@ -48,7 +48,9 @@ export default {
     },
 
     data() {
+        
         return {
+            
             title: 'Beo Crescent IoT Dashboard',
             activeTab: 0,
         }
@@ -56,6 +58,8 @@ export default {
 
     watch: {
         activeTab: function() {
+            
+            console.log(this.activeTab);
             if (this.activeTab == 1) {
                 // Nanyuan Fishball Stall
                 this.stopAllAPI()
@@ -74,10 +78,13 @@ export default {
                 this.triggerTVAPI()
             } else {
                 this.stopAllAPI()
+                this.triggerMainAPI()
             }
         }
     },
-
+    mounted:function(){
+        this.triggerMainAPI() //method1 will execute at pageload
+    },
     methods: {
         stopAllAPI() {
             // this function helps to stop all API once the tab is inactive
@@ -85,6 +92,7 @@ export default {
             this.$refs.tablevision.startAPIPolling(false);
             this.$refs.haichew.startAPIPolling(false);
             this.$refs.soonheng.startAPIPolling(false);
+            this.$refs.overview.startAPIPolling(false);
         },
         triggerNYAPI() {
             // triggers the api polling once clicked
@@ -101,6 +109,9 @@ export default {
         triggerTVAPI() {
             // triggers the api polling once clicked
             this.$refs.tablevision.startAPIPolling(true)
+        },
+        triggerMainAPI() {
+            this.$refs.overview.startAPIPolling(true)
         }
     }
 }

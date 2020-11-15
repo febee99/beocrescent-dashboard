@@ -49,7 +49,6 @@ def g6traydistr(stall_id, date_wanted):
         d = datetime.replace(",", "-")
         date = d[:10]
         if date == date_wanted:
-            print("hi")
             time = d[11:13] + ":00"
             counttime = list_data[time]
             counttime += 1
