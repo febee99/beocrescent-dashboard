@@ -68,15 +68,17 @@ export default {
     selectedDate: function () {
       if (!this.date) {
         console.log("Not this.date");
+        console.log(this.date.getDate());
         return "2020-10-12";
       } else {
-        //console.log(this.date);
+        // console.log(this.date);
+        // console.log((this.date.getDate() + "").length);
         return (
           this.date.getFullYear() +
           "-" +
           (parseInt(this.date.getMonth()) + 1) +
           "-" +
-          this.date.getDate()
+          ((this.date.getDate() + "").length == 1 ? "0" + this.date.getDate() : this.date.getDate())
         );
       }
     }
@@ -99,7 +101,6 @@ export default {
       lineChartAPIStatus: "Offline",
       lineChartTable: [],
       interval: null,
-
       pieChartAPIStatus: "Offline",
       pieChartTable: [],
 
@@ -109,7 +110,7 @@ export default {
         labels: ["Trays Returned Here", "Trays Not Returned Here"],
         datasets: [
           {
-            backgroundColor: ["#ee4350", "#409cd2"],
+            backgroundColor: ["#409cd2", "#ee4350"],
             pointBackgroundColor: "white",
             borderWidth: 1,
             pointBorderColor: "#249EBF",
@@ -140,19 +141,19 @@ export default {
         ],
         datasets: [
           {
-            label: "Tray distributed",
-            BackgroundColor: "white",
-            borderWidth: 3,
-            borderColor: "#ef4250",
-            pointBorderColor: "#249EBF",
-            data: [],
-          },
-          {
             label: "Trays returned",
             BackgroundColor: "#white",
             borderWidth: 3,
             borderColor: "#7AD7F0",
             pointBorderColor: "#7AD7F0",
+            data: [],
+          },
+          {
+            label: "Tray distributed",
+            BackgroundColor: "white",
+            borderWidth: 3,
+            borderColor: "#ef4250",
+            pointBorderColor: "#249EBF",
             data: [],
           },
         ],
@@ -166,12 +167,11 @@ export default {
     },
 
     pieChartTable: function () {
-
       this.$refs.haichewPieChart.renderChart(this.haichewReturns);
-
     },
 
     date: function () {
+      this.haichewReturns.datasets[0].data = [];
       this.patronReturnInsights.datasets[0].data =[];
       this.patronReturnInsights.datasets[1].data = [];
       this.getLineChartData();
@@ -185,38 +185,27 @@ export default {
       if (!start) {
         clearInterval(this.interval);
       } else {
-        this.getPieChartData();
-        this.getLineChartData();
+        this.getLineChartData()
+        this.getPieChartData()
+        this.interval = setInterval(() => {
+                          this.patronReturnInsights.datasets[0].data =[];
+                          this.patronReturnInsights.datasets[1].data = [];
+                          this.getLineChartData()
+                          this.getPieChartData()
 
+                        }, 10000);
       }
     },
     getLineChartData() {
-
-      let trays_distributed = this.$axios
-        .get(API.BASE + API.DISTRVISION + "/1/" + this.selectedDate )
-        .then((apiResponse) => {
-          var data = apiResponse.data;
-          //console.log(Object.keys(time_sensor_data));
-          for (var time of Object.keys(data)) {
-            //console.log(time);
-            var data1 = data[time];
-            this.lineChartTable.push(data1);
-            this.patronReturnInsights.datasets[0].data.push(data1);
-          }
-
-          this.lineChartAPIStatus = "LIVE";
-        });
-
+      
       let trays_returned = this.$axios
         .get(API.BASE + API.RETURNVISION + "/1/" + this.selectedDate )
         .then((apiResponse) => {
           var data = apiResponse.data;
-          //console.log(Object.keys(time_sensor_data));
           for (var time of Object.keys(data)) {
-            //console.log(time);
             var data1 = data[time];
             this.lineChartTable.push(data1);
-            this.patronReturnInsights.datasets[1].data.push(data1);
+            this.patronReturnInsights.datasets[0].data.push(data1);
 
         }
 
@@ -228,13 +217,25 @@ export default {
           if (error.response != undefined) {
             var response = error.response.data;
             this.toastAlert(response.message, "is-danger", 5000);
-            console.log("nanyuan " + response.message);
+            console.log("haichew " + response.message);
           } else {
             if (this.lineChartAPIStatus != "Offline") {
               this.toastAlert(error, "is-danger", 5000);
-              console.log("nanyuan " + error);
+              console.log("haichew " + error);
             }
           }
+        });
+      let trays_distributed = this.$axios
+        .get(API.BASE + API.DISTRVISION + "/1/" + this.selectedDate )
+        .then((apiResponse) => {
+          var data = apiResponse.data;
+          for (var time of Object.keys(data)) {
+            //console.log(time);
+            var data1 = data[time];
+            this.lineChartTable.push(data1);
+            this.patronReturnInsights.datasets[1].data.push(data1);
+          }
+          this.lineChartAPIStatus = "LIVE";
         });
 
     },
@@ -266,11 +267,11 @@ export default {
             var response = error.response.data;
             this.pieChartTable = [];
             this.toastAlert(response.message, "is-danger", 5000);
-            console.log("nanyuan " + response.message);
+            console.log("haichew " + response.message);
           } else {
             if (this.rfidFsrAPIStatus != "Offline") {
               this.toastAlert(error, "is-danger", 5000);
-              console.log("nanyuan " + error);
+              console.log("haichew " + error);
             }
           }
         });

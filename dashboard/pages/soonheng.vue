@@ -76,7 +76,7 @@ export default {
           "-" +
           (parseInt(this.date.getMonth()) + 1) +
           "-" +
-          this.date.getDate()
+          ((this.date.getDate() + "").length == 1 ? "0" + this.date.getDate() : this.date.getDate())
         );
       }
     }

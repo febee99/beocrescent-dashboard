@@ -17,7 +17,7 @@ positivetrayreturn = db['positivetrayreturn']
 stall_distribution = db['stall_distribution']
 
 
-@app.route("/g6trayreturn//<stall_id>/<date_wanted>", methods=['GET'])
+@app.route("/g6trayreturn/<stall_id>/<date_wanted>", methods=['GET'])
 def g6trayreturn(stall_id, date_wanted):
     list_of_time = ['06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
                     '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00']
@@ -44,7 +44,6 @@ def g6traydistr(stall_id, date_wanted):
     list_data = {'06:00': 0, '07:00': 0, '08:00': 0, '09:00': 0, '10:00': 0, '11:00': 0, '12:00': 0, '13:00': 0, '14:00': 0,
                  '15:00': 0, '16:00': 0, '17:00': 0, '18:00': 0, '19:00': 0, '20:00': 0, "21:00": 0, "22:00": 0, "23:00": 0}
     data = stall_distribution.find({"rasp_id": int(stall_id)})
-
     for x in data:
         datetime = str(x["datetime"])
         d = datetime.replace(",", "-")
@@ -62,6 +61,7 @@ def g6traydistr(stall_id, date_wanted):
 def g6total(stall_id, date_wanted):
     total_distr = 0
     data = stall_distribution.find({"rasp_id": int(stall_id)})
+    #data = stall_distribution.find({"sensor_id": 26}) 
     for x in data:
         datetime = str(x["datetime"])
         d = datetime.replace(",", "-")
@@ -78,8 +78,8 @@ def g6total(stall_id, date_wanted):
         if date == date_wanted:
             total_return += 1
 
-    not_returned = total_distr - total_return
-    data = {"NotReturned": not_returned, "Returned": total_return}
+    not_returned = total_distr - total_return 
+    data = {"NotReturned": not_returned , "Returned": total_return}
     print(data)
     return json.dumps(data), 200
 
