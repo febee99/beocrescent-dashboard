@@ -362,8 +362,7 @@ def g6trayclear(date_wanted):
     count = 0
     data = empty_trayreturn.find()
     for x in data:
-        datetime = str(x["datetime"])
-        d = datetime.replace(",", "-")
+        d = str(x["datetime"])
         date = d[:10]
         if date == date_wanted:
             count += 1
@@ -378,8 +377,7 @@ def g6total(stall_id, date_wanted):
     data = stall_distribution.find({"rasp_id": int(stall_id)})
 
     for x in data:
-        datetime = str(x["datetime"])
-        d = datetime.replace(",", "-")
+        d = str(x["datetime"])
         date = d[:10]
         if date == date_wanted:
             total_distr += 1
@@ -387,8 +385,7 @@ def g6total(stall_id, date_wanted):
     total_return = 0
     data2 = positivetrayreturn.find({"stall_id": int(stall_id)})
     for y in data2:
-        datetime = str(y["datetime"])
-        d = datetime.replace(",", "-")
+        d = str(y["datetime"])
         date = d[:10]
         if date == date_wanted:
             total_return += 1
@@ -396,8 +393,7 @@ def g6total(stall_id, date_wanted):
     clear_count = 0
     data3 = empty_trayreturn.find()
     for y in data3:
-        datetime = str(y["datetime"])
-        d = datetime.replace(",", "-")
+        d = str(y["datetime"])
         date = d[:10]
         if date == date_wanted:
             clear_count += 1
@@ -414,16 +410,14 @@ def g6barchart_traydistr():
     distr = stall_distribution.find({"rasp_id": 1})
     returns = positivetrayreturn.find({"stall_id": 1})
     for x in distr:
-        datetime = str(x["datetime"])
-        d = datetime.replace(",", "-")
+        d = str(x["datetime"])
         date = d[:10]
         if date in data["distr"]:
             count = data["distr"][date]
             count += 1
             data["distr"][date] = count
     for x in returns:
-        datetime = str(x["datetime"])
-        d = datetime.replace(",", "-")
+        d = str(x["datetime"])
         date = d[:10]
         if date in data["returns"]:
             count = data["returns"][date]

@@ -94,15 +94,15 @@ export default {
       if (!this.date) {
         console.log("Not this.date");
         console.log(this.date.getDate());
-        return "2020-10-12";
+        return "2020,10,12";
       } else {
         // console.log(this.date);
         // console.log((this.date.getDate() + "").length);
         return (
           this.date.getFullYear() +
-          "-" +
+          "," +
           (parseInt(this.date.getMonth()) + 1) +
-          "-" +
+          "," +
           ((this.date.getDate() + "").length == 1 ? "0" + this.date.getDate() : this.date.getDate())
         );
       }
@@ -259,40 +259,22 @@ export default {
       }
     },
     getLineChartData() {
-      let trays_distributed = this.$axios
-        .get(API.BASE + API.DISTRVISION + "/1/" + this.selectedDate )
+      let trays_returned = this.$axios
+        .get(API.BASE + API.RETURNDISTRVISION + "/1/" + this.selectedDate )
         .then((apiResponse) => {
           var data = apiResponse.data;
-          for (var time of Object.keys(data)) {
-            //console.log(time);
-            var data1 = data[time];
-            this.lineChartTable.push(data1);
-            this.patronReturnInsights.datasets[1].data.push(data1);
-          }
-          this.lineChartAPIStatus = "LIVE";
-        })
-        .catch((error) => {
-          this.lineChartAPIStatus = "Offline";
-          this.lineChartTable = [];
-          if (error.response != undefined) {
-            var response = error.response.data;
-            this.toastAlert(response.message, "is-danger", 5000);
-            console.log("haichew line chart" + response.message);
-          } else {
-            if (this.lineChartAPIStatus != "Offline") {
-              this.toastAlert(error, "is-danger", 5000);
-              console.log("haichew line chart" + error);
-            }
-          }
-        });
-        let trays_returned = this.$axios
-        .get(API.BASE + API.RETURNVISION + "/1/" + this.selectedDate )
-        .then((apiResponse) => {
-          var data = apiResponse.data;
-          for (var time of Object.keys(data)) {
-            var data1 = data[time];
+          var returns = data["returns"]
+          var distr = data["distr"]
+          for (var time of Object.keys(returns)) {
+            var data1 = returns[time];
             this.lineChartTable.push(data1);
             this.patronReturnInsights.datasets[0].data.push(data1);
+
+        }
+        for (var time of Object.keys(distr)) {
+            var data1 = distr[time];
+            this.lineChartTable.push(data1);
+            this.patronReturnInsights.datasets[1].data.push(data1);
 
         }
 
