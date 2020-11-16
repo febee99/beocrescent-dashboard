@@ -66,8 +66,8 @@
                             type="is-dark"
                             :number="g7tb"
                             suffix="%"
-                            label="G7 Tablevision"
-                            description="Percentage of patrons who cleaned up their tables after eating (G7 Tablevision)"
+                            label="G7 Table Vision"
+                            description="Percentage of patrons who cleaned up their tables after eating (G7 Table Vision)"
                             />
                             <card-widget
                             class="tile is-child notification has-background-warning-light"
