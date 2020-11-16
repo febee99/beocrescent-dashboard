@@ -404,21 +404,23 @@ def g6total(stall_id, date_wanted):
     return json.dumps(data), 200
 
 @app.route("/g6barchart", methods=['GET'])
-def g6barchart_traydistr():
+def g6barchart():
     data = {"returns": {"2020-10-19":0 , "2020-10-23":0, "2020-10-26":0, "2020-11-07":0}, 
     "distr": {"2020-10-19":0 , "2020-10-23":0, "2020-10-26":0, "2020-11-07":0}}
     distr = stall_distribution.find({"rasp_id": 1})
     returns = positivetrayreturn.find({"stall_id": 1})
     for x in distr:
-        d = str(x["datetime"])
+        datetime = str(x["datetime"])
+        d = datetime.replace(",", "-")
         date = d[:10]
         if date in data["distr"]:
             count = data["distr"][date]
             count += 1
             data["distr"][date] = count
     for x in returns:
-        d = str(x["datetime"])
-        date = d[:10]
+        datetime = str(x["datetime"])
+        d = datetime.replace(",", "-")
+        date = d[:10]  
         if date in data["returns"]:
             count = data["returns"][date]
             count += 1
