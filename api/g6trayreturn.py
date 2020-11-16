@@ -107,5 +107,6 @@ def g6total(stall_id, date_wanted):
     return json.dumps(data), 200
 
 
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002, debug=True)

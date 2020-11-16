@@ -17,7 +17,7 @@ positivetrayreturn = db['positivetrayreturn']
 stall_distribution = db['stall_distribution']
 
 @app.route("/g6barchart", methods=['GET'])
-def g6barchart_traydistr():
+def g6barchart():
     data = {"returns": {"2020-10-19":0 , "2020-10-23":0, "2020-10-26":0, "2020-11-07":0}, 
     "distr": {"2020-10-19":0 , "2020-10-23":0, "2020-10-26":0, "2020-11-07":0}}
     distr = stall_distribution.find({"rasp_id": 1})
