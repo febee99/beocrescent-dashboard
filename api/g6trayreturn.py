@@ -56,7 +56,7 @@ def g6traydistr(stall_id, date_wanted):
     print(list_data)
     return json.dumps(list_data), 200
 
-@ app.route("/g6trayclear/<date_wanted>", methods=['GET'])
+@app.route("/g6trayclear/<date_wanted>", methods=['GET'])
 def g6trayclear(date_wanted):
     count = 0
     data = empty_trayreturn.find()
