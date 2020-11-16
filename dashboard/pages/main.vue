@@ -1,50 +1,45 @@
 <template>
     <div class="columns is-vcentered is-multiline">
         <div class="column is-4">
-            <card-widget
+            <card-text
                 class="tile is-child"
-                type="is-success"
-                icon="account-multiple"
-                :number="51"
-                suffix="%"
-                label="Positive tray return rate"
-                description="Percentage of confirmed self-initiated tray returns"
+                label="Basic Information"
+                information="1) Team 6 data starts from 10am to 3pm.
+2) Team 7 data starts from 9am to 4pm
+3) We took the percentage of Positive tray return rates over time
+   using all the days of data collected.
+4) Difference in both team’s positive tray return rate is due the
+   difference in how we collect data."
             />
         </div>
         <div class="column is-4">
-            <card-widget
+            <card-text
                 class="tile is-child"
-                type="is-danger"
-                icon="account-multiple"
-                :number="86"
-                suffix="%"
-                label="Negative tray return rate"
-                description="Unreturned trays or trays cleared by cleaners"
+                label="Analysis"
+                information="1) Tray return rate during peak hours (Around 11pm to 2pm)
+   is lower than during non-peak periods. 
+   
+   
+   
+   "
             />
         </div>
         <div class="column is-4">
-            <card-widget
+            <card-text
                 class="tile is-child"
-                type="is-info"
-                icon="clock"
-                :number="12"
-                suffix="pm"
-                label="Hour trays returned most"
-                description="The 1-hour time period when trays are self-returned most"
+                label="Reasons"
+                information="1) Cleaners are more active in clearing tables to 
+   allow other diners to use the tables during peak periods.
+2) During peak periods, it maybe harder to navigate to tray return
+   points hence patrons are less likely to clear.
+   
+   "
             />
         </div>
-        <div class="column is-6">
+        <div class="column is-12">
             <div class="card">
                 <div class="card-content">
-                    <p class="title">Some pie chart</p>
-                    <doughnut-chart :chartData="this.trayReturnInsights"/>
-                </div>
-            </div>
-        </div>
-        <div class="column is-6">
-            <div class="card">
-                <div class="card-content">
-                    <p class="title">Tray return chart</p>
+                    <p class="title">Positive Tray Return Rate (%) Consolidated Data</p>
                     <line-chart :chartData="this.cleanerReturnInsights"/>
                 </div>
             </div>
@@ -58,6 +53,7 @@ import CardComponent from '@/components/CardComponent'
 import DoughnutChart from '@/components/DoughnutChart'
 import LineChart from '@/components/LineChart'
 import PieChart from '@/components/PieChart'
+import CardText from '@/components/CardTextComponent'
 export default {
 
     head() {
@@ -68,7 +64,8 @@ export default {
 
     components: {
         CardWidget,
-        DoughnutChart
+        DoughnutChart,
+        CardText
     },
 
     data() {
