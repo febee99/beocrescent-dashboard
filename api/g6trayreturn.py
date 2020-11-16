@@ -15,7 +15,7 @@ CORS(app)
 db = client['iotTest']
 positivetrayreturn = db['positivetrayreturn']
 stall_distribution = db['stall_distribution']
-
+empty_trayreturn = db['empty_trayreturn']
 
 @app.route("/g6trayreturn/<stall_id>/<date_wanted>", methods=['GET'])
 def g6trayreturn(stall_id, date_wanted):
@@ -56,12 +56,26 @@ def g6traydistr(stall_id, date_wanted):
     print(list_data)
     return json.dumps(list_data), 200
 
+@ app.route("/g6trayclear/<date_wanted>", methods=['GET'])
+def g6trayclear(date_wanted):
+    count = 0
+    data = empty_trayreturn.find()
+    for x in data:
+        datetime = str(x["datetime"])
+        d = datetime.replace(",", "-")
+        date = d[:10]
+        if date == date_wanted:
+            count += 1
+    
+    data = {"Cleared": count} 
+    print(data)
+    return json.dumps(data), 200
 
 @app.route("/g6total/<stall_id>/<date_wanted>", methods=['GET'])
 def g6total(stall_id, date_wanted):
     total_distr = 0
     data = stall_distribution.find({"rasp_id": int(stall_id)})
-    #data = stall_distribution.find({"sensor_id": 26}) 
+
     for x in data:
         datetime = str(x["datetime"])
         d = datetime.replace(",", "-")
@@ -78,8 +92,17 @@ def g6total(stall_id, date_wanted):
         if date == date_wanted:
             total_return += 1
 
+    clear_count = 0
+    data3 = empty_trayreturn.find()
+    for y in data3:
+        datetime = str(y["datetime"])
+        d = datetime.replace(",", "-")
+        date = d[:10]
+        if date == date_wanted:
+            clear_count += 1
+
     not_returned = total_distr - total_return 
-    data = {"NotReturned": not_returned , "Returned": total_return}
+    data = {"NotReturned": not_returned , "Returned": total_return, "Cleared": clear_count}
     print(data)
     return json.dumps(data), 200
 

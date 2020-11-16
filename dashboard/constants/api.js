@@ -16,6 +16,7 @@ export const rfidTrayIn = base == localBase ? ':5008/tray_in' : '';
 export const returnVision = base == localBase ? ':5002/g6trayreturn' : '/g6trayreturn';
 export const distrVision = base == localBase ? ':5002/g6traydistr' : '/g6traydistr';
 export const totalCountVision = base == localBase ? ':5002/g6total' : '/g6total';
+export const barChart = base == localBase ? ':5004/g6barchart' : '/g6barchart';
 
 export const g6Overview = base == localBase ? ':5003/g6overview' : '/g6overview';
 
@@ -34,6 +35,7 @@ export default {
     RETURNVISION: returnVision,
     DISTRVISION: distrVision,
     STALLTOTALVISION: totalCountVision,
+    BARCHART: barChart,
     G6OVERVIEW: g6Overview
 
 }
