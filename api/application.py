@@ -505,7 +505,9 @@ def overview_tr():
     
     for i, t in enumerate(list_of_time):
         try:
-            list_data2[t] = round((list_of_tray_in[i] / list_of_tray_out[i])*100, 2)
+            list_data2[t] = round(( (list_of_tray_out[i] - list_of_tray_in[i]) / list_of_tray_out[i])*100, 2)
+            if list_data2[t] < 0:
+                list_data2[t] = 0
         except:
             continue
 
@@ -544,9 +546,74 @@ def overview_tr():
 
     return jsonify(result), 200
 
+@app.route("/overview2", methods=['GET'])
+def overview2():
+    data = {"returns": {"2020-10-19":0 , "2020-10-23":0, "2020-10-26":0, "2020-11-07":0}, 
+    "distr": {"2020-10-19":0 , "2020-10-23":0, "2020-10-26":0, "2020-11-07":0}}
+    distr = stall_distribution.find({"rasp_id": 1})
+    returns = positivetrayreturn.find({"stall_id": 1})
+
+    for x in distr:
+        datetime = str(x["datetime"])
+        d = datetime.replace(",", "-")
+        date = d[:10]
+        if date in data["distr"]:
+            count = data["distr"][date]
+            count += 1
+            data["distr"][date] = count
+    for x in returns:
+        datetime = str(x["datetime"])
+        d = datetime.replace(",", "-")
+        date = d[:10]
+        if date in data["returns"]:
+            count = data["returns"][date]
+            count += 1
+            data["returns"][date] = count
+
+    totalreturn = 0
+    totaldistr = 0
+    for key, value in data['returns'].items():
+        totalreturn += value
+
+    for key, value in data['distr'].items():
+        totaldistr += value
+
+    g6 = round( (totalreturn/totaldistr) *100, 2)
+
+    # G7 tablevision
+    sessions = g7_tablevision.find()
+    total_sessions = g7_tablevision.find().count()
+    positive_sessions = 0
+    sessions = g7_tablevision.find()
+
+    for session in sessions:
+        if session['states'][-2] == 2:
+            positive_sessions += 1
+
+    g7tb = round( (positive_sessions/total_sessions) *100, 2)
+
+
+    # G7 tray return
+    total_out = g7_tray_out.find().count() 
+    trolley_in = g7_tray_in.find()
+    total = 0
+    for data1 in trolley_in:
+        total += data1['status_count']
+    self_in = total_out - total
+    data = {"CleanerReturn": total, "SelfReturn": self_in}
+
+    g7tr = round((self_in / total_out)*100, 2)
+
+    result = {
+        'g6': g6,
+        'g7tb': g7tb,
+        'g7tr': g7tr,
+    }
+    return jsonify(result), 200
+
+    # return str(round( (totalreturn/totaldistr) *100, 2)), 200
+
 # TODO: Tablevision distribution stats
-
-
 
 # ===================================================================================================
 
