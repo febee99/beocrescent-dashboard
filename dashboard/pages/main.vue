@@ -2,77 +2,87 @@
     <section>
     <div class="columns is-vcentered is-multiline">
         <div class="column is-4">
-            <card-widget
+            <card-text
                 class="tile is-child"
-                type="is-success"
-                icon="account-multiple"
-                :number="51"
-                suffix="%"
-                label="Positive tray return rate"
-                description="Percentage of confirmed self-initiated tray returns"
+                label="Basic Information"
+                information="1) Team 6 data starts from 10am to 3pm.
+2) Team 7 data starts from 9am to 4pm
+3) We took the percentage of Positive tray return rates over time
+   using all the days of data collected.
+4) Difference in both team’s positive tray return rate is due the
+   difference in how we collect data."
             />
         </div>
         <div class="column is-4">
-            <card-widget
+            <card-text
                 class="tile is-child"
-                type="is-danger"
-                icon="account-multiple"
-                :number="86"
-                suffix="%"
-                label="Negative tray return rate"
-                description="Unreturned trays or trays cleared by cleaners"
+                label="Analysis"
+                information="1) Tray return rate during peak hours (Around 11pm to 2pm)
+   is lower than during non-peak periods. 
+   
+   
+   
+   "
             />
         </div>
         <div class="column is-4">
-            <card-widget
+            <card-text
                 class="tile is-child"
-                type="is-info"
-                icon="clock"
-                :number="12"
-                suffix="pm"
-                label="Hour trays returned most"
-                description="The 1-hour time period when trays are self-returned most"
+                label="Reasons"
+                information="1) Cleaners are more active in clearing tables to 
+   allow other diners to use the tables during peak periods.
+2) During peak periods, it maybe harder to navigate to tray return
+   points hence patrons are less likely to clear.
+   
+   "
             />
         </div>
-        <div class="column is-6">
+    </div>
+
+    <div class="columns is-vcentered is-multiline">
+
+        <div class="column is-5">
             <div class="card">
                 <div class="card-content">
-                    <p class="title">Some pie chart</p>
-                    <doughnut-chart :chartData="this.trayReturnInsights"/>
-                </div>
-            </div>
-        </div>
-        <div class="column is-6">
-            <div class="card">
-                <div class="card-content">
-                    <p class="title">Tray return chart</p>
+                    <p class="title">Positive Tray Return Rate (%) Consolidated Data</p>
                     <line-chart :chartData="this.cleanerReturnInsights"/>
                 </div>
             </div>
         </div>
-       
-      </div>    
- 
-    <div class="columns is-12">
-        <div class="card">
-            <div class="card-content">
-                <p class="title is-size-5-touch">Hourly Tray Return Rate</p>
-                <!-- <b-field label="Select a date">
-                <b-datepicker
-                    placeholder="Click to select..."
-                    v-model="date"
-                    :min-date="minDate"
-                    :max-date="maxDate"
-                >
-                </b-datepicker>
-                </b-field> -->
-                <line-chart
-                    ref="overallRateLineChart"
-                    :chartData="this.patronReturnInsights"
-                />
-            </div>    
-        </div>
+
+        <div class="tile is-ancestor">
+                    <div class="tile is-vertical is-block-tablet">
+                        <div class="tile is-parent is-vertical">
+                            <card-widget
+                            class="tile is-child notification has-background-success-light"
+                            type="is-dark"
+                            :number="g7tr"
+                            suffix="%"
+                            label="G7 Tray Return"
+                            description="Percentage of patrons who cleaned up their tables after eating (G7 Tray Return)"
+                            />
+                            <card-widget
+                            class="tile is-child notification has-background-danger-light"
+                            type="is-dark"
+                            :number="g7tb"
+                            suffix="%"
+                            label="G7 Table Vision"
+                            description="Percentage of patrons who cleaned up their tables after eating (G7 Table Vision)"
+                            />
+                            <card-widget
+                            class="tile is-child notification has-background-warning-light"
+                            type="is-dark"
+                            :number="g6"
+                            :suffix="'%'"
+                            label="G6 Tray Return"
+                            description="Percentage of patrons who cleaned up their tables after eating (G6 Tray Return)"
+                            />
+                        </div>
+                    </div>
+                </div>
     </div>
+       
+          
     </section>
 </template>
 
@@ -82,6 +92,7 @@ import CardComponent from '@/components/CardComponent'
 import DoughnutChart from '@/components/DoughnutChart'
 import LineChart from '@/components/LineChart'
 import PieChart from '@/components/PieChart'
+import CardText from '@/components/CardTextComponent'
 import API from "@/constants/api";
 
 export default {
@@ -94,11 +105,15 @@ export default {
 
     components: {
         CardWidget,
-        DoughnutChart
+        DoughnutChart,
+        CardText
     },
     
     data() {
         return {
+            g7tr: '',
+            g7tb: '',
+            g6: '',
             title: 'Beo Crescent IoT Dashboard',
             lineChartAPIStatus: "Offline",
             lineChartTable: [],
@@ -116,59 +131,29 @@ export default {
                 ]
             },
             cleanerReturnInsights: {
-                labels: ['06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
+                // labels: ['04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
+                labels: ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'],
                 datasets: [
-                    {  
-                        label: "Nan Yuan Fishball Noodle Stall",
-                        backgroundColor: ['#409cd2'],
-                        pointBackgroundColor: 'white',
-                        borderWidth: 1,
-                        pointBorderColor: '#249EBF',
-                        data: [10, 30, 46, 44, 55, 44, 61, 44, 22, 34, 15, 23, 25, 12, 44]
+                    {
+                    type: 'line',
+                    label: 'G7-Tray-Return',
+                    fill: false,
+                    borderColor: 'red',
+                    data: [0]
+                    }, {
+                    type: 'line',
+                    label: 'G7-Table-Vision',
+                    borderColor: 'gray',
+                    fill: false,
+                    data: [0]
+                    }, {
+                    type: 'line',
+                    label: 'G6-Tray-Return',
+                    borderColor: 'blue',
+                    fill: false,
+                    data: [0]
                     }
-                ]
-            },
-            patronReturnInsights: {
-                labels: [
-                "04:00",
-                "05:00",
-                "06:00",
-                "07:00",
-                "08:00",
-                "09:00",
-                "10:00",
-                "11:00",
-                "12:00",
-                "13:00",
-                "14:00",
-                "15:00",
-                "16:00",
-                "17:00",
-                "18:00",
-                "19:00",
-                "20:00",
-                "21:00",
-                "22:00",
-                "23:00",
-                ],
-                datasets: [
-                    {
-                        label: "Group 6",
-                        BackgroundColor: "#white",
-                        borderWidth: 3,
-                        borderColor: "#7AD7F0",
-                        pointBorderColor: "#7AD7F0",
-                        data: [],
-                    },
-                    {
-                        label: "Group 7",
-                        BackgroundColor: "#white",
-                        borderWidth: 3,
-                        borderColor: "#7AD7F0",
-                        pointBorderColor: "#7AD7F0",
-                        data: [],
-                    },
-                ],
+          ]
             },
         }
     },
@@ -184,52 +169,48 @@ export default {
                 clearInterval(this.interval);
             } else {
                 this.getLineChartData();
+                this.populateData();
             }
         },
         getLineChartData() {
-            let group6 = this.$axios
-                .get(API.BASE + API.G6OVERVIEW)
+            let something = this.$axios
+                .get(API.BASE + API.OVERVIEW)
                 .then((apiResponse) => {
                     var data = apiResponse.data;
-                    for (var time of Object.keys(data)) {
-                        var data1 = data[time];
-                        this.lineChartTable.push(data1);
-                        this.patronReturnInsights.datasets[0].data.push(data1);
-                    }
-                    this.lineChartAPIStatus = "LIVE";
-                });
+                    
+                    let g6 = data.g6
+                    let g7tr = data['g7-tray']
+                    let g7tb = data['g7-tablevision']
 
-            let group7 = this.$axios
-                .get(API.BASE + API.G6OVERVIEW)
-                .then((apiResponse) => {
-                    var data = apiResponse.data;
-                    //console.log(Object.keys(time_sensor_data));
-                    for (var time of Object.keys(data)) {
-                        //console.log(time);
-                        var data1 = data[time];
-                        this.lineChartTable.push(data1);
-                        this.patronReturnInsights.datasets[1].data.push(data1);
 
-                    }
-
-                    this.lineChartAPIStatus = "LIVE";
-                })
-                .catch((error) => {
-                    this.lineChartAPIStatus = "Offline";
-                    this.lineChartTable = [];
-                    if (error.response != undefined) {
-                        var response = error.response.data;
-                        this.toastAlert(response.message, "is-danger", 5000);
-                        console.log("overviewrate " + response.message);
-                    } else {
-                        if (this.lineChartAPIStatus != "Offline") {
-                        this.toastAlert(error, "is-danger", 5000);
-                        console.log("overviewrate " + error);
+                    for (var key in g6) {
+                        let t = parseInt(key)
+                        if (t > 9 && t <= 15) {
+                            this.cleanerReturnInsights.datasets[0].data.push(g7tr[key]);
+                            this.cleanerReturnInsights.datasets[1].data.push(g7tb[key]);
+                            this.cleanerReturnInsights.datasets[2].data.push(g6[key]);
+                        } else if (t > 15 && t < 20) {
+                            this.cleanerReturnInsights.datasets[1].data.push(g7tb[key]);
                         }
                     }
-                });
 
+                    console.log(this.cleanerReturnInsights.datasets[2].data)
+                    
+                    this.lineChartAPIStatus = "LIVE";
+                });
         },
-    },
+
+        populateData() {
+            let somethingelse = this.$axios
+                .get(API.BASE + API.OVERVIEW2)
+                .then((apiResponse) => {
+                    var data = apiResponse.data;
+                    
+                    this.g6 = data.g6
+                    this.g7tr = data.g7tr
+                    this.g7tb = data.g7tb
+                });
+        }
+    }
 }
 </script>

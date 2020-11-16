@@ -29,6 +29,7 @@ g7_tablevision = g7_client['iot']['session_clean']
 # G6 Initialization
 positivetrayreturn = g6_client['iotTest']['positivetrayreturn']
 stall_distribution = g6_client['iotTest']['stall_distribution']
+empty_trayreturn = g6_client['iotTest']['empty_trayreturn']
 
 
 #! G7 - TABLEVISION
@@ -220,6 +221,38 @@ def get_return_stats_hour_day(dt):
             "type": "error",
             "message": str(e)
         }), 500
+
+
+@app.route('/distribution')
+def distribution():
+    sessions = g7_tablevision.find()
+    positive_sessions = 0
+    negative_sessions = 0
+    positive_list = [0] * 4
+    negative_list = [0] * 4
+
+    for session in sessions:
+        tray_count = session['tray_count']
+        if session['states'][-2] == 1:
+            negative_sessions += 1
+            
+            negative_list[tray_count-1] += 1
+        else:
+            positive_sessions += 1
+            positive_list[tray_count-1] += 1
+
+    for i in range(4):
+        positive_list[i] = round((positive_list[i]/positive_sessions)*100, 2)
+        negative_list[i] = round((negative_list[i]/negative_sessions)*100, 2)
+
+    result = {
+        "positive": positive_list,
+        "negative": negative_list
+    }
+
+
+    return jsonify(result), 200
+
 # ===================================================================================================
 
 #! G7 - TRAYINOUT
@@ -295,51 +328,55 @@ def tray_in_out():
 
 #! G6
 # ===================================================================================================
-@app.route("/g6trayreturn//<stall_id>/<date_wanted>", methods=['GET'])
-def g6trayreturn(stall_id, date_wanted):
-    list_of_time = ['06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
-                    '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00']
-    list_data = {'06:00': 0, '07:00': 0, '08:00': 0, '09:00': 0, '10:00': 0, '11:00': 0, '12:00': 0, '13:00': 0, '14:00': 0,
-                 '15:00': 0, '16:00': 0, '17:00': 0, '18:00': 0, '19:00': 0, '20:00': 0, "21:00": 0, "22:00": 0, "23:00": 0}
+@app.route("/g6trayreturndistr/<stall_id>/<date_wanted>", methods=['GET'])
+def g6trayreturndistr(stall_id, date_wanted):
+    list_data = {"returns": {'06:00': 0, '07:00': 0, '08:00': 0, '09:00': 0, '10:00': 0, '11:00': 0, '12:00': 0, '13:00': 0, '14:00': 0,
+                 '15:00': 0, '16:00': 0, '17:00': 0, '18:00': 0, '19:00': 0, '20:00': 0, "21:00": 0, "22:00": 0, "23:00": 0},
+                 "distr": {'06:00': 0, '07:00': 0, '08:00': 0, '09:00': 0, '10:00': 0, '11:00': 0, '12:00': 0, '13:00': 0, '14:00': 0,
+                 '15:00': 0, '16:00': 0, '17:00': 0, '18:00': 0, '19:00': 0, '20:00': 0, "21:00": 0, "22:00": 0, "23:00": 0}}
     data = positivetrayreturn.find({"stall_id": int(stall_id)})
     for x in data:
-        datetime = str(x["datetime"])
-        d = datetime.replace(",", "-")
+        d = str(x["datetime"])
         date = d[:10]
         if date == date_wanted:
             time = d[11:13] + ":00"
-            counttime = list_data[time]
+            counttime = list_data["returns"][time]
             counttime += 1
-            list_data[time] = counttime
+            list_data["returns"][time] = counttime
+    print(list_data)
+
+    data2 = stall_distribution.find({"rasp_id": int(stall_id)})
+    for x in data2:
+        d = str(x["datetime"])
+        date = d[:10]
+        if date == date_wanted:
+            time = d[11:13] + ":00"
+            counttime = list_data["distr"][time]
+            counttime += 1
+            list_data["distr"][time] = counttime
     print(list_data)
     return json.dumps(list_data), 200
 
-
-@app.route("/g6traydistr/<stall_id>/<date_wanted>", methods=['GET'])
-def g6traydistr(stall_id, date_wanted):
-    list_of_time = ['06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
-                    '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00']
-    list_data = {'06:00': 0, '07:00': 0, '08:00': 0, '09:00': 0, '10:00': 0, '11:00': 0, '12:00': 0, '13:00': 0, '14:00': 0,
-                 '15:00': 0, '16:00': 0, '17:00': 0, '18:00': 0, '19:00': 0, '20:00': 0, "21:00": 0, "22:00": 0, "23:00": 0}
-    data = stall_distribution.find({"rasp_id": int(stall_id)})
-
+@app.route("/g6trayclear/<date_wanted>", methods=['GET'])
+def g6trayclear(date_wanted):
+    count = 0
+    data = empty_trayreturn.find()
     for x in data:
         datetime = str(x["datetime"])
         d = datetime.replace(",", "-")
         date = d[:10]
         if date == date_wanted:
-            time = d[11:13] + ":00"
-            counttime = list_data[time]
-            counttime += 1
-            list_data[time] = counttime
-    print(list_data)
-    return json.dumps(list_data), 200
+            count += 1
+    
+    data = {"Cleared": count}
+    return json.dumps(data), 200
 
 
 @app.route("/g6total/<stall_id>/<date_wanted>", methods=['GET'])
 def g6total(stall_id, date_wanted):
     total_distr = 0
     data = stall_distribution.find({"rasp_id": int(stall_id)})
+
     for x in data:
         datetime = str(x["datetime"])
         d = datetime.replace(",", "-")
@@ -356,12 +393,43 @@ def g6total(stall_id, date_wanted):
         if date == date_wanted:
             total_return += 1
 
-    not_returned = total_distr - total_return
-    data = {"NotReturned": not_returned, "Returned": total_return}
+    clear_count = 0
+    data3 = empty_trayreturn.find()
+    for y in data3:
+        datetime = str(y["datetime"])
+        d = datetime.replace(",", "-")
+        date = d[:10]
+        if date == date_wanted:
+            clear_count += 1
+
+    not_returned = total_distr - total_return 
+    data = {"NotReturned": not_returned , "Returned": total_return, "Cleared": clear_count}
     print(data)
     return json.dumps(data), 200
 
-
+@app.route("/g6barchart", methods=['GET'])
+def g6barchart():
+    data = {"returns": {"2020-10-19":0 , "2020-10-23":0, "2020-10-26":0, "2020-11-07":0}, 
+    "distr": {"2020-10-19":0 , "2020-10-23":0, "2020-10-26":0, "2020-11-07":0}}
+    distr = stall_distribution.find({"rasp_id": 1})
+    returns = positivetrayreturn.find({"stall_id": 1})
+    for x in distr:
+        datetime = str(x["datetime"])
+        d = datetime.replace(",", "-")
+        date = d[:10]
+        if date in data["distr"]:
+            count = data["distr"][date]
+            count += 1
+            data["distr"][date] = count
+    for x in returns:
+        datetime = str(x["datetime"])
+        d = datetime.replace(",", "-")
+        date = d[:10]
+        if date in data["returns"]:
+            count = data["returns"][date]
+            count += 1
+            data["returns"][date] = count
+    return json.dumps(data), 200
 # ===================================================================================================
 
 
@@ -426,7 +494,9 @@ def overview_tr():
     
     for i, t in enumerate(list_of_time):
         try:
-            list_data2[t] = round((list_of_tray_in[i] / list_of_tray_out[i])*100, 2)
+            list_data2[t] = round(( (list_of_tray_out[i] - list_of_tray_in[i]) / list_of_tray_out[i])*100, 2)
+            if list_data2[t] < 0:
+                list_data2[t] = 0
         except:
             continue
 
@@ -465,9 +535,74 @@ def overview_tr():
 
     return jsonify(result), 200
 
+@app.route("/overview2", methods=['GET'])
+def overview2():
+    data = {"returns": {"2020-10-19":0 , "2020-10-23":0, "2020-10-26":0, "2020-11-07":0}, 
+    "distr": {"2020-10-19":0 , "2020-10-23":0, "2020-10-26":0, "2020-11-07":0}}
+    distr = stall_distribution.find({"rasp_id": 1})
+    returns = positivetrayreturn.find({"stall_id": 1})
+
+    for x in distr:
+        datetime = str(x["datetime"])
+        d = datetime.replace(",", "-")
+        date = d[:10]
+        if date in data["distr"]:
+            count = data["distr"][date]
+            count += 1
+            data["distr"][date] = count
+    for x in returns:
+        datetime = str(x["datetime"])
+        d = datetime.replace(",", "-")
+        date = d[:10]
+        if date in data["returns"]:
+            count = data["returns"][date]
+            count += 1
+            data["returns"][date] = count
+
+    totalreturn = 0
+    totaldistr = 0
+    for key, value in data['returns'].items():
+        totalreturn += value
+
+    for key, value in data['distr'].items():
+        totaldistr += value
+
+    g6 = round( (totalreturn/totaldistr) *100, 2)
+
+    # G7 tablevision
+    sessions = g7_tablevision.find()
+    total_sessions = g7_tablevision.find().count()
+    positive_sessions = 0
+    sessions = g7_tablevision.find()
+
+    for session in sessions:
+        if session['states'][-2] == 2:
+            positive_sessions += 1
+
+    g7tb = round( (positive_sessions/total_sessions) *100, 2)
+
+
+    # G7 tray return
+    total_out = g7_tray_out.find().count() 
+    trolley_in = g7_tray_in.find()
+    total = 0
+    for data1 in trolley_in:
+        total += data1['status_count']
+    self_in = total_out - total
+    data = {"CleanerReturn": total, "SelfReturn": self_in}
+
+    g7tr = round((self_in / total_out)*100, 2)
+
+    result = {
+        'g6': g6,
+        'g7tb': g7tb,
+        'g7tr': g7tr,
+    }
+    return jsonify(result), 200
+
+    # return str(round( (totalreturn/totaldistr) *100, 2)), 200
+
 # TODO: Tablevision distribution stats
-
-
 
 # ===================================================================================================
 

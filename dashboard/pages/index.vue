@@ -12,10 +12,6 @@
                 <!-- haichew.vue -->
                 <Haichew ref="haichew"/>
             </b-tab-item>
-            <b-tab-item label="Soon Heng Lor Mee" icon="silverware-variant">
-                <!-- soonheng.vue -->
-                <SoonHeng ref="soonheng"/>
-            </b-tab-item>
             <b-tab-item label="Tablevision" icon="cctv">
                 <!-- tablevision.vue -->
                 <Tablevision ref="tablevision"/>
@@ -29,7 +25,6 @@
 import Overview from '@/pages/main'
 import Nanyuan from '@/pages/nanyuan'
 import Haichew from '@/pages/haichew'
-import SoonHeng from '@/pages/soonheng'
 import Tablevision from '@/pages/tablevision'
 export default {
 
@@ -43,7 +38,6 @@ export default {
         Overview,
         Nanyuan,
         Haichew,
-        SoonHeng,
         Tablevision
     },
 
@@ -68,11 +62,7 @@ export default {
                 // Haichew Fish Soup
                 this.stopAllAPI()
                 this.triggerHCAPI()
-            } else if (this.activeTab == 3){
-                // Soon Heng Lor Mee
-                this.stopAllAPI()
-                this.triggerSHAPI()
-            } else if (this.activeTab == 4) {
+            } else if (this.activeTab == 3) {
                 // Nanyuan Fishball Stall
                 this.stopAllAPI()
                 this.triggerTVAPI()
@@ -91,7 +81,6 @@ export default {
             this.$refs.nanyuan.startAPIPolling(false);
             this.$refs.tablevision.startAPIPolling(false);
             this.$refs.haichew.startAPIPolling(false);
-            this.$refs.soonheng.startAPIPolling(false);
             this.$refs.overview.startAPIPolling(false);
         },
         triggerNYAPI() {
@@ -101,10 +90,6 @@ export default {
         triggerHCAPI() {
             // triggers the api polling once clicked
             this.$refs.haichew.startAPIPolling(true)
-        },
-        triggerSHAPI() {
-            // triggers the api polling once clicked
-            this.$refs.soonheng.startAPIPolling(true)
         },
         triggerTVAPI() {
             // triggers the api polling once clicked
