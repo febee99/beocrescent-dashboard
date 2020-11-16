@@ -13,8 +13,8 @@ export const rfidFsrVision = base == localBase ? ':5008/rfid_fsr' : '';
 export const rfidTrayInOut = base == localBase ? ':5008/tray_in_out' : '';
 export const rfidTrayIn = base == localBase ? ':5008/tray_in' : '';
 
-export const returnVision = base == localBase ? ':5002/g6trayreturn' : '/g6trayreturn';
-export const distrVision = base == localBase ? ':5002/g6traydistr' : '/g6traydistr';
+export const returnDistrVision = base == localBase ? ':5002/g6trayreturndistr' : '/g6trayreturndistr';
+// export const distrVision = base == localBase ? ':5002/g6traydistr' : '/g6traydistr';
 export const totalCountVision = base == localBase ? ':5002/g6total' : '/g6total';
 export const barChart = base == localBase ? ':5004/g6barchart' : '/g6barchart';
 
@@ -32,8 +32,8 @@ export default {
     RFIDTRAYIN: rfidTrayIn,
 
     // Group 6 API endpoints
-    RETURNVISION: returnVision,
-    DISTRVISION: distrVision,
+    RETURNDISTRVISION: returnDistrVision,
+    // DISTRVISION: distrVision,
     STALLTOTALVISION: totalCountVision,
     BARCHART: barChart,
     G6OVERVIEW: g6Overview
