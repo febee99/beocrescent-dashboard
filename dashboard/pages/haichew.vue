@@ -26,28 +26,6 @@
       <div class="column is-4 has-text-centered">
         <div class="card">
           <div class="card-content">
-            <p class="title is-size-5-touch">Cleaner's Clearing Count</p>
-            <card-widget
-              class="tile is-child"
-              type="is-info"
-              icon="broom"
-              :number="this.cleanerClear"
-              :key="cleanerClear"
-              label="At this station"
-              description="Number of times cleaners have cleared the tray return point"
-            />
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-content">
-            <p class="title is-size-5-touch">Tray Return Visualisation</p>
-            <pie-chart ref="haichewPieChart" :chartData="this.haichewReturns" />
-          </div>
-        </div>
-      </div>
-      <div class="column is-4 has-text-centered">
-        <div class="card">
-          <div class="card-content">
             <p class="title is-size-5-touch">Tray Return Rate</p>
             <card-widget
               class="tile is-child"
@@ -58,6 +36,29 @@
               suffix="%"
               label="At this station"
               description="Percentage of patrons who returned their trays to this tray return point"
+            />
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-content">
+            <p class="title is-size-5-touch">Tray Return Visualisation</p>
+            <pie-chart ref="haichewPieChart" :chartData="this.haichewReturns" />
+          </div>
+        </div>
+      </div>
+      <div class="column is-4 has-text-centered">
+        <div class="card">
+          <div class="card-content">
+            <p class="title is-size-5-touch">Cleaner's Average Clearing Count</p>
+            <card-widget
+              class="tile is-child"
+              type="is-info"
+              icon="broom"
+              :number="4"
+              :key="cleanerClear"
+              label="At this station"
+              description="Average number of times cleaners have cleared the tray return point per day"
             />
           </div>
         </div>
