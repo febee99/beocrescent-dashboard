@@ -1,7 +1,7 @@
 <template>
     <section>
     <div class="columns is-vcentered is-multiline">
-        <div class="column is-4">
+        <div class="column is-4-desktop is-12-tablet">
             <card-text
                 class="tile is-child"
                 label="Basic Information"
@@ -15,7 +15,7 @@ return rate is due to the difference in
 how we collect data."
             />
         </div>
-        <div class="column is-4">
+        <div class="column is-4-desktop is-12-tablet">
             <card-text
                 class="tile is-child"
                 label="Analysis"
@@ -28,7 +28,7 @@ non-peak periods.
    "
             />
         </div>
-        <div class="column is-4">
+        <div class="column is-4-desktop is-12-tablet">
             <card-text
                 class="tile is-child"
                 label="Reasons"
@@ -123,18 +123,6 @@ export default {
             lineChartAPIStatus: "Offline",
             lineChartTable: [],
             interval: null,
-            trayReturnInsights: {
-                labels: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
-                datasets: [
-                    {
-                        backgroundColor: ['#ee4350', '#409cd2', '#80257d', '#bfd2fb', '#d6006d', '#f5a167', '#AEE1CD'],
-                        pointBackgroundColor: 'white',
-                        borderWidth: 1,
-                        pointBorderColor: '#249EBF',
-                        data: [60, 200, 100, 250, 300, 500, 140]
-                    }
-                ]
-            },
             patronReturnInsights: {
                 // labels: ['04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
                 labels: ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'],
@@ -178,6 +166,9 @@ export default {
             }
         },
         getLineChartData() {
+            this.patronReturnInsights.datasets[0].data = [0]
+            this.patronReturnInsights.datasets[1].data = [0]
+            this.patronReturnInsights.datasets[2].data = [0]
             let something = this.$axios
                 .get(API.BASE + API.OVERVIEW)
                 .then((apiResponse) => {
