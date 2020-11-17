@@ -93,7 +93,7 @@ export default {
         },
         triggerTVAPI() {
             // triggers the api polling once clicked
-            this.$refs.tablevision.startAPIPolling(true)
+            // this.$refs.tablevision.startAPIPolling(true)
         },
         triggerMainAPI() {
             this.$refs.overview.startAPIPolling(true)

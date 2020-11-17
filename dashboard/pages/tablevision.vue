@@ -30,6 +30,12 @@
                             API Status:
                             <span :class="tableVisionAPIStatus == 'LIVE' ? 'has-text-success' : 'has-text-danger'">{{ this.tableVisionAPIStatus }}</span>
                         </p>
+                        <br>
+                        <div class="field">
+                            <b-switch v-model="didTriggerAPI">
+                                Start API
+                            </b-switch>
+                        </div>
                         <b-tag :type="leTable.state == 0 ? 'is-success' : leTable.state == 1 ? 'is-warning' : 'is-danger'" class="my-2 mx-2" size="is-large" :id="leTable.table" v-for="leTable in tables" v-bind:key="leTable.table">
                             <p class="has-text-weight-bold">{{ leTable.table }}</p>
                         </b-tag>
@@ -104,12 +110,23 @@ export default {
 
         hourlyStats: function() {
             this.$refs.tablevisionChart.renderChart(this.tablevisionChartData);
+        },
+
+        didTriggerAPI: function() {
+            if (this.didTriggerAPI) {
+                this.startAPIPolling(true)
+            } else {
+                // stop polling
+                this.tableVisionAPIStatus = "Offline"
+                this.startAPIPolling(false)
+            }
         }
     },
 
     data() {
         var today = new Date()
         return {
+            didTriggerAPI: false,
             tableVisionAPIStatus: "Offline",
             tables: [],
 
