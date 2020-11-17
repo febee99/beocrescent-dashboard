@@ -50,7 +50,7 @@ patrons are less likely to clear.
             <div class="card">
                 <div class="card-content">
                     <p class="title">Positive Tray Return Rate (%) Consolidated Data</p>
-                    <line-chart :chartData="this.cleanerReturnInsights"/>
+                    <line-chart ref="overallRateLineChart" :chartData="this.cleanerReturnInsights"/>
                 </div>
             </div>
         </div>
@@ -71,11 +71,11 @@ patrons are less likely to clear.
                             type="is-dark"
                             :number="g7tb"
                             suffix="%"
-                            label="G7 Table Vision"
-                            description="Percentage of patrons who cleaned up their tables after eating (G7 Table Vision)"
+                            label="G7 Tablevision"
+                            description="Percentage of patrons who cleaned up their tables after eating (G7 Tablevision)"
                             />
                             <card-widget
-                            class="tile is-child notification has-background-warning-light"
+                            class="tile is-child notification has-background-info-light"
                             type="is-dark"
                             :number="g6"
                             :suffix="'%'"
@@ -143,18 +143,18 @@ export default {
                     type: 'line',
                     label: 'G7-Tray-Return',
                     fill: false,
-                    borderColor: 'red',
+                    borderColor: '#23d160',
                     data: [0]
                     }, {
                     type: 'line',
-                    label: 'G7-Table-Vision',
-                    borderColor: 'gray',
+                    label: 'G7-Tablevision',
+                    borderColor: '#ff3860',
                     fill: false,
                     data: [0]
                     }, {
                     type: 'line',
                     label: 'G6-Tray-Return',
-                    borderColor: 'blue',
+                    borderColor: '#209cee',
                     fill: false,
                     data: [0]
                     }
@@ -163,8 +163,8 @@ export default {
         }
     },
     watch: {
-        lineChartTable: function () {
-            this.$refs.overallRateLineChart.renderChart(this.patronReturnInsights);
+        cleanerReturnInsights: function () {
+            this.$refs.overallRateLineChart.renderChart(this.cleanerReturnInsights);
         }
     },
     methods: {
@@ -199,7 +199,8 @@ export default {
                         }
                     }
 
-                    console.log(this.cleanerReturnInsights.datasets[2].data)
+
+                    this.$refs.overallRateLineChart.renderChart(this.cleanerReturnInsights);
                     
                     this.lineChartAPIStatus = "LIVE";
                 });
