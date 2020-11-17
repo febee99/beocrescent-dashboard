@@ -50,7 +50,7 @@ patrons are less likely to clear.
             <div class="card">
                 <div class="card-content">
                     <p class="title">Positive Tray Return Rate (%) Consolidated Data</p>
-                    <line-chart ref="overallRateLineChart" :chartData="this.cleanerReturnInsights"/>
+                    <line-chart ref="overallRateLineChart" :chartData="this.patronReturnInsights"/>
                 </div>
             </div>
         </div>
@@ -135,7 +135,7 @@ export default {
                     }
                 ]
             },
-            cleanerReturnInsights: {
+            patronReturnInsights: {
                 // labels: ['04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
                 labels: ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'],
                 datasets: [
@@ -163,8 +163,8 @@ export default {
         }
     },
     watch: {
-        cleanerReturnInsights: function () {
-            this.$refs.overallRateLineChart.renderChart(this.cleanerReturnInsights);
+        patronReturnInsights: function () {
+            this.$refs.overallRateLineChart.renderChart(this.patronReturnInsights);
         }
     },
     methods: {
@@ -191,16 +191,16 @@ export default {
                     for (var key in g6) {
                         let t = parseInt(key)
                         if (t > 9 && t <= 15) {
-                            this.cleanerReturnInsights.datasets[0].data.push(g7tr[key]);
-                            this.cleanerReturnInsights.datasets[1].data.push(g7tb[key]);
-                            this.cleanerReturnInsights.datasets[2].data.push(g6[key]);
+                            this.patronReturnInsights.datasets[0].data.push(g7tr[key]);
+                            this.patronReturnInsights.datasets[1].data.push(g7tb[key]);
+                            this.patronReturnInsights.datasets[2].data.push(g6[key]);
                         } else if (t > 15 && t < 20) {
-                            this.cleanerReturnInsights.datasets[1].data.push(g7tb[key]);
+                            this.patronReturnInsights.datasets[1].data.push(g7tb[key]);
                         }
                     }
 
 
-                    this.$refs.overallRateLineChart.renderChart(this.cleanerReturnInsights);
+                    this.$refs.overallRateLineChart.renderChart(this.patronReturnInsights);
                     
                     this.lineChartAPIStatus = "LIVE";
                 });
