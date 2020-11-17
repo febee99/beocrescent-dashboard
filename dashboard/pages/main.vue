@@ -7,18 +7,21 @@
                 label="Basic Information"
                 information="1) Team 6 data starts from 10am to 3pm.
 2) Team 7 data starts from 9am to 4pm
-3) We took the percentage of Positive tray return rates over time
-   using all the days of data collected.
-4) Difference in both team’s positive tray return rate is due the
-   difference in how we collect data."
+3) We took the percentage of positive tray 
+return rates over time using all the days 
+of data collected.
+4) Difference in both team’s positive tray 
+return rate is due to the difference in 
+how we collect data."
             />
         </div>
         <div class="column is-4">
             <card-text
                 class="tile is-child"
                 label="Analysis"
-                information="1) Tray return rate during peak hours (Around 11pm to 2pm)
-   is lower than during non-peak periods. 
+                information="1) Tray return rate during peak hours 
+(Around 11pm to 2pm) is lower than during 
+non-peak periods. 
    
    
    
@@ -29,10 +32,12 @@
             <card-text
                 class="tile is-child"
                 label="Reasons"
-                information="1) Cleaners are more active in clearing tables to 
-   allow other diners to use the tables during peak periods.
-2) During peak periods, it maybe harder to navigate to tray return
-   points hence patrons are less likely to clear.
+                information="1) Cleaners are more active in clearing 
+tables to allow other diners to use the 
+tables during peak periods.
+2) During peak periods, it maybe harder to 
+navigate to tray return points hence 
+patrons are less likely to clear.
    
    "
             />
