@@ -4,15 +4,15 @@
             <b-tab-item label="Overview" icon="information-variant">
                 <Overview ref="overview"/>
             </b-tab-item>
-            <b-tab-item label="Nan Yuan Fishball" icon="noodles">
+            <b-tab-item label="Nan Yuan Fishball (G7)" icon="noodles">
                 <!-- nanyuan.vue -->
                 <Nanyuan ref="nanyuan"/>
             </b-tab-item>
-            <b-tab-item label="Hai Chew Fish Soup" icon="rice">
+            <b-tab-item label="Hai Chew Fish Soup (G6)" icon="rice">
                 <!-- haichew.vue -->
                 <Haichew ref="haichew"/>
             </b-tab-item>
-            <b-tab-item label="Tablevision" icon="cctv">
+            <b-tab-item label="Tablevision (G7)" icon="cctv">
                 <!-- tablevision.vue -->
                 <Tablevision ref="tablevision"/>
             </b-tab-item>

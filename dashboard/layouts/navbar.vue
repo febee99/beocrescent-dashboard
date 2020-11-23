@@ -7,7 +7,7 @@
                 >
             </b-navbar-item>
         </template>
-        <template slot="end">
+        <!-- <template slot="end">
             <b-navbar-item tag="router-link" :to="{path: '/'}">
                 Home
             </b-navbar-item>
@@ -20,7 +20,7 @@
                     Log out
                 </b-navbar-item>
             </b-navbar-dropdown>
-        </template>
+        </template> -->
     </b-navbar>
 </template>
 

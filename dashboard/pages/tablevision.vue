@@ -1,7 +1,8 @@
 <template>
     <section class="section">
-        <p class="title m-5 pt-5">Tablevision data</p>
-        <div class="columns is-vcentered">
+        <p class="title">Tablevision data</p>
+        <small class="subtitle has-text-grey">Monitor occupancy status and self-returns/cleaner-returns with automated object detection through the Google Cloud Vision API.</small>
+        <div class="columns is-vcentered my-5">
             <div class="column is-5">
                 <div class="card has-background-info-light">
                     <div class="card-content">

@@ -1,5 +1,5 @@
 export const localBase = 'http://localhost';
-export const devBase = 'https://qju04f7u0a.execute-api.ap-southeast-1.amazonaws.com/dev';
+export const devBase = 'https://fm7tv6fq08.execute-api.ap-southeast-1.amazonaws.com/dev';
 export const prodBase = '';
 
 

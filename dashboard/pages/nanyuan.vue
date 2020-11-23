@@ -1,7 +1,7 @@
 <template>
   <section>
-    <p class="title m-5 pt-5">RFID-tagged tray-returns data</p>
-    <div></div>
+    <p class="title m-5 pt-5">RFID-FSR-Motion Sensor Tray In/Out Data</p>
+    <small class="subtitle has-text-grey m-5">Tray out from stall, tray in by cleaners. This helps to detect cleaner-returns.</small>
     <div class="columns mt-5 is-multiline is-tablet">
       <div class="column is-4 has-text-centered">
         <div class="card">

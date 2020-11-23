@@ -1,7 +1,8 @@
 <template>
     <section>
-    <div class="columns is-vcentered is-multiline">
-        <div class="column is-4-desktop is-12-tablet">
+        <b-loading :is-full-page="true" v-model="isLoading" :can-cancel="false"></b-loading>
+    <div class="tile is-ancestor is-block-tablet is-flex-widescreen" style="overflow-x: auto;">
+        <div class="tile is-parent ">
             <card-text
                 class="tile is-child"
                 label="Basic Information"
@@ -15,7 +16,7 @@ return rate is due to the difference in
 how we collect data."
             />
         </div>
-        <div class="column is-4-desktop is-12-tablet">
+        <div class="tile is-parent ">
             <card-text
                 class="tile is-child"
                 label="Analysis"
@@ -28,9 +29,9 @@ non-peak periods.
    "
             />
         </div>
-        <div class="column is-4-desktop is-12-tablet">
+        <div class="tile is-parent ">
             <card-text
-                class="tile is-child"
+                class="tile is-child box"
                 label="Reasons"
                 information="1) Cleaners are more active in clearing 
 tables to allow other diners to use the 
@@ -119,6 +120,7 @@ export default {
             g7tr: '',
             g7tb: '',
             g6: '',
+            isLoading: true,
             title: 'Beo Crescent IoT Dashboard',
             lineChartAPIStatus: "Offline",
             lineChartTable: [],
@@ -192,7 +194,7 @@ export default {
 
 
                     this.$refs.overallRateLineChart.renderChart(this.patronReturnInsights);
-                    
+                    this.isLoading = false;
                     this.lineChartAPIStatus = "LIVE";
                 });
         },
